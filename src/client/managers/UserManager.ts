@@ -3,33 +3,33 @@ import { Client } from '../Client.ts';
 type AllowedFormats = 'webp' | 'gif' | 'png' | 'jpg' | 'jpeg';
 type AllowedSizes = 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096;
 
-export class UsersManager {
-  private _client: Client;
+export class UserManager {
+  client: Client;
 
   constructor(client: Client) {
-    this._client = client;
+    this.client = client;
   }
 
   /**
    * Get the avatar URL of a User
-   * @param {{userID: string; userAvatarHash: string; size?: AllowedSizes; format?: AllowedFormats; canBeDynamic?: boolean}} params - Required parameters 
+   * @param {{userID: string; userAvatarHash: string; size?: AllowedSizes; format?: AllowedFormats; dynamic?: boolean}} params - Required parameters 
    */
-  public getAvatarURL(params: {
+  getAvatarURL(params: {
     userID: string;
     userAvatarHash: string;
     size?: AllowedSizes;
     format?: AllowedFormats;
-    canBeDynamic?: boolean;
+    dynamic?: boolean;
   }): string {
     if (typeof params.size === 'undefined' || ![16, 32, 64, 128, 256, 512, 1024, 2048, 4096].includes(params.size)) params.size = 256;
     if (typeof params.format === 'undefined' || !['webp', 'gif', 'png', 'jpg', 'jpeg'].includes(params.format)) params.format = 'webp';
-    if (typeof params.canBeDynamic !== 'boolean') params.canBeDynamic = false; 
+    if (typeof params.dynamic !== 'boolean') params.dynamic = false; 
     return `https://cdn.discordapp.com/avatars/${
       params.userID
     }/${
       params.userAvatarHash
     }.${
-      params.canBeDynamic && 
+      params.dynamic && 
       params.userAvatarHash.startsWith('a_') ? 'gif' : params.format
     }`;
   }

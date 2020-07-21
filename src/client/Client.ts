@@ -1,9 +1,9 @@
-import { UsersManager } from './managers/UsersManager.ts';
+import { UserManager } from './managers/UserManager.ts';
 
 export class Client {
-  public readonly users: UsersManager;
+  readonly users: UserManager;
 
   constructor() {
-    this.users = new UsersManager(this);
+    this.users = new UserManager(this);
   }
 }
