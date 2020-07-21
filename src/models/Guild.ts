@@ -1,3 +1,10 @@
+interface GuildStructure {
+  id: string;
+}
+
 export class Guild {
-  constructor(structure: any) {}
+  readonly id: string;
+  constructor(structure: GuildStructure) {
+    this.id = structure.id
+  }
 }
