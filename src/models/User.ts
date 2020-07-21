@@ -24,7 +24,6 @@ export class User {
   // public readonly flags?: number;
   public readonly premiumType?: number;
   public readonly publicFlags?: number;
-  public readonly isPartial: boolean;
 
   constructor(structure: ReceivedUserStructure) {
     this.id = structure.id;
@@ -38,6 +37,9 @@ export class User {
     // this.flags = structure.flags;
     this.premiumType = structure.premium_type;
     this.publicFlags = structure.public_flags;
-    this.isPartial = typeof this.username !== 'undefined'
+  }
+
+  get isPartial(): boolean {
+    return typeof this.username !== "undefined";
   }
 }
