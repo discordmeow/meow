@@ -20,11 +20,11 @@ export class UserManager {
     canBeDynamic: false
   }): string {
     if (user.isPartial) throw new Error('User should not be partial.');
-    return `${CDN_BASE_URL}avatars/${user.id}/${user.avatarHash}.${params.canBeDynamic && user.avatarHash?.startsWith('a_') ? 'gif': params.format}?size=${params.size}`;
+    return `${CDN_BASE_URL}/avatars/${user.id}/${user.avatarHash}.${params.canBeDynamic && user.avatarHash?.startsWith('a_') ? 'gif': params.format}?size=${params.size}`;
   }
 
   public getDefaultAvatarURL(user: User, size: AllowedSizes): string {
     if (user.isPartial) throw new Error('User should bot be partial.');
-    return `${CDN_BASE_URL}embed/avatars/${user.id}/${Number(user.discriminator) % 5}.png`;
+    return `${CDN_BASE_URL}/embed/avatars/${user.id}/${Number(user.discriminator) % 5}.png?size=${String(size)}`;
   }
 }
