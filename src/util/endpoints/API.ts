@@ -1,4 +1,4 @@
-export const ApiEndpoints = {
+export const APIEndpoints = {
   GUILDS: "/guilds",
   GUILD: (guildID: string) => `/guilds/${guildID}`,
   GUILD_PREVIEW: (guildID: string) => `/guilds/${guildID}/preview`,
@@ -109,4 +109,6 @@ export const ApiEndpoints = {
   WEBHOOK_COMPATIBLE_GITHUB: (
     { webhookID, webhookToken }: { webhookID: string; webhookToken: string },
   ) => `/webhooks/${webhookID}/${webhookToken}/github`,
+
+  GATEWAY_BOT: "/gateway/bot",
 };
