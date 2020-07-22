@@ -36,6 +36,7 @@ export const ApiEndpoints = {
     { guildID, integrationID }: { guildID: string; integrationID: string },
   ) => `/guilds/${guildID}/integrations/${integrationID}/sync`,
   GUILD_WIDGET: (guildID: string) => `/guilds/${guildID}/widget`,
+  GUILD_WIDGET_IMAGE: (guildID: string) => `/guilds/${guildID}/widget.png`,
   GUILD_VANITY_URL: (guildID: string) => `/guilds/${guildID}/vanity-url`,
 
   CHANNEL: (channelID: string) => `/channels/${channelID}`,
@@ -52,6 +53,14 @@ export const ApiEndpoints = {
       emoji: string;
     },
   ) => `/channels/${channelID}/messages/${messageID}/reactions/${emoji}`,
+  CHANNEL_MESSAGE_REACTION_ME: (
+    { channelID, messageID, emoji}: {
+      channelID: string;
+      messageID: string;
+      emoji: string;
+    },
+  ) =>
+    `/channels/${channelID}/messages/${messageID}/reactions/${emoji}/@me`,
   CHANNEL_MESSAGE_REACTION_USER: (
     { channelID, messageID, emoji, userID }: {
       channelID: string;
@@ -79,4 +88,11 @@ export const ApiEndpoints = {
   CHANNEL_DM_RECIPIENT: (
     { channelID, userID }: { channelID: string; userID: string },
   ) => `/channels/${channelID}/recipients/${userID}`,
+
+  INVITE: (inviteCode:string) => `/invites/${inviteCode}`,
+
+  USER_ME: "/users/@me",
+  USER: (userID: string) => `/users/${userID}`,
+  USER_GUILDS: "/users/@me/guilds",
+  
 };
