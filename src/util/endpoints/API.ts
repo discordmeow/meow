@@ -109,4 +109,6 @@ export const ApiEndpoints = {
   WEBHOOK_COMPATIBLE_GITHUB: (
     { webhookID, webhookToken }: { webhookID: string; webhookToken: string },
   ) => `/webhooks/${webhookID}/${webhookToken}/github`,
+
+  GATEWAY_BOT: "/gateway/bot",
 };
