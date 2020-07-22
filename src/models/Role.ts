@@ -1,5 +1,5 @@
-import { Client } from '../client/Client.ts';
-import { Guild } from './Guild.ts';
+import { Client } from "../client/Client.ts";
+import { Guild } from "./Guild.ts";
 
 export interface ReceivedRoleStructure {
   id: string;
@@ -22,7 +22,11 @@ export class Role {
   public managed: boolean;
   public mentionable: boolean;
 
-  constructor(structure: ReceivedRoleStructure, public guild: Guild, public client: Client) {
+  constructor(
+    structure: ReceivedRoleStructure,
+    public guild: Guild,
+    public client: Client,
+  ) {
     this.id = structure.id;
     this.name = structure.name;
     this.color = structure.color;
@@ -33,4 +37,3 @@ export class Role {
     this.mentionable = structure.mentionable;
   }
 }
-

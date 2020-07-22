@@ -1,3 +1,5 @@
+import { Client } from "../client/Client.ts";
+
 interface MessageStructure {
   id: string;
   channelID?: string;
@@ -5,5 +7,5 @@ interface MessageStructure {
 }
 
 export class Message {
-  constructor(structure: MessageStructure) {}
+  constructor(structure: MessageStructure, public client: Client) {}
 }
