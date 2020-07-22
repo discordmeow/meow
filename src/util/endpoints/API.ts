@@ -38,6 +38,7 @@ export const ApiEndpoints = {
   GUILD_WIDGET: (guildID: string) => `/guilds/${guildID}/widget`,
   GUILD_WIDGET_IMAGE: (guildID: string) => `/guilds/${guildID}/widget.png`,
   GUILD_VANITY_URL: (guildID: string) => `/guilds/${guildID}/vanity-url`,
+  GUILD_WEBHOOKS: (guildID: string) => `/guilds/${guildID}/webhooks`,
 
   CHANNEL: (channelID: string) => `/channels/${channelID}`,
   CHANNEL_MESSAGES: (channelID: string) => `/channels/${channelID}/messages`,
@@ -54,13 +55,12 @@ export const ApiEndpoints = {
     },
   ) => `/channels/${channelID}/messages/${messageID}/reactions/${emoji}`,
   CHANNEL_MESSAGE_REACTION_ME: (
-    { channelID, messageID, emoji}: {
+    { channelID, messageID, emoji }: {
       channelID: string;
       messageID: string;
       emoji: string;
     },
-  ) =>
-    `/channels/${channelID}/messages/${messageID}/reactions/${emoji}/@me`,
+  ) => `/channels/${channelID}/messages/${messageID}/reactions/${emoji}/@me`,
   CHANNEL_MESSAGE_REACTION_USER: (
     { channelID, messageID, emoji, userID }: {
       channelID: string;
@@ -88,11 +88,25 @@ export const ApiEndpoints = {
   CHANNEL_DM_RECIPIENT: (
     { channelID, userID }: { channelID: string; userID: string },
   ) => `/channels/${channelID}/recipients/${userID}`,
+  CHANNEL_WEBHOOKS: (channelID: string) => `/channels/${channelID}/webhooks`,
 
-  INVITE: (inviteCode:string) => `/invites/${inviteCode}`,
+  INVITE: (inviteCode: string) => `/invites/${inviteCode}`,
 
   USER_ME: "/users/@me",
+  USER_ME_DM: "/users/@me/channels",
+  USER_ME_GUILD: (guildID: string) => `/users/@me/guilds/${guildID}`,
   USER: (userID: string) => `/users/${userID}`,
-  USER_GUILDS: "/users/@me/guilds",
-  
+
+  VOICE_REGIONS: "/voice/regions",
+
+  WEBHOOK: (webhookID: string) => `/webhooks/${webhookID}`,
+  WEBHOOK_WITH_TOKEN: (
+    { webhookID, webhookToken }: { webhookID: string; webhookToken: string },
+  ) => `/webhooks/${webhookID}/${webhookToken}`,
+  WEBHOOK_COMPATIBLE_SLACK: (
+    { webhookID, webhookToken }: { webhookID: string; webhookToken: string },
+  ) => `/webhooks/${webhookID}/${webhookToken}/slack`,
+  WEBHOOK_COMPATIBLE_GITHUB: (
+    { webhookID, webhookToken }: { webhookID: string; webhookToken: string },
+  ) => `/webhooks/${webhookID}/${webhookToken}/github`,
 };
