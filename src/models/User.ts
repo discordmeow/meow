@@ -21,7 +21,7 @@ export class User {
   // readonly flags?: number;
   /** The type of Nitro subscription on a user's account */
   public premiumType?: number;
-  /** The public flags on a user's account */
+  /** he public flags on a user's account */
   public publicFlags?: number;
 
   constructor(structure: any, public client: Client) {
