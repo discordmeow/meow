@@ -1,4 +1,4 @@
-export const ApiEndpoints = {
+export const APIEndpoints = {
   GUILDS: "/guilds",
   GUILD: (guildID: string) => `/guilds/${guildID}`,
   GUILD_PREVIEW: (guildID: string) => `/guilds/${guildID}/preview`,
