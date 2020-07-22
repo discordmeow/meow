@@ -1,4 +1,4 @@
-import { UserManager } from './managers/UserManager.ts';
+import { UserManager } from '../managers/UserManager.ts';
 
 export class Client {
   readonly users: UserManager;
