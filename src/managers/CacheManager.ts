@@ -7,13 +7,15 @@ import { User } from "../models/User.ts";
 
 export class CacheManager {
   /** Map containing every cached users */
-  public users: Map<string, User> = new Map<string, User>();
+  public users: Map<string, User> = new Map();
   /** Map containing every cached guilds */
-  public guilds: Map<string, Guild> = new Map<string, Guild>();
+  public guilds: Map<string, Guild> = new Map();
   /** Map containing every cached emojis */
-  public emojis: Map<string, Emoji> = new Map<string, Emoji>();
+  public emojis: Map<string, Emoji> = new Map();
   /** Map containing every cached channels */
-  public channels: Map<string, Channel> = new Map<string, Channel>();
+  public channels: Map<string, Channel> = new Map();
+  /** Set containing IDs of unavailable guilds */
+  public unavailableGuilds: Set<string> = new Set();
 
   constructor(public client: Client) {}
 
