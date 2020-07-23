@@ -1,11 +1,13 @@
-import { Client, ClientOptions } from "../client/Client.ts";
+import { Client } from "../client/Client.ts";
 import {
   WebSocket,
+  WebSocketCloseEvent,
   connectWebSocket,
   isWebSocketCloseEvent,
 } from "../../deps.ts";
 import { GATEWAY_BASE_URL, GATEWAY_VERSION } from "../util/Constants.ts";
 import { EventHandler } from "./EventHandler.ts";
+import { GatewayError } from "../errors/GatewayError.ts";
 
 const { stringify, parse } = JSON;
 
@@ -16,6 +18,37 @@ export interface Payload {
   t?: string;
 }
 
+export enum Opcodes {
+  DISPATCH,
+  HEARTBEAT,
+  IDENTIFY,
+  PRESENCE_UPDATE,
+  VOICE_STATE_UPDATE,
+  RESUME = 6,
+  RECONNECT,
+  REQUEST_GUILD_MEMBERS,
+  INVALID_SESSION,
+  HELLO,
+  HEARTBEAT_ACK,
+}
+
+export enum CloseEventCodes {
+  UNKNOWN_ERROR = 4000,
+  UNKNOWN_OPCODE,
+  DECODE_ERROR,
+  NOT_AUTHENTICATED,
+  AUTHENTICATION_FAILED,
+  ALREADY_AUTHENTICATED,
+  INVALID_SEQ = 4007,
+  RATE_LIMITED,
+  SESSION_TIMED_OUT,
+  INVALID_SHARD,
+  SHARDING_REQUIRED,
+  INVALID_API_VERSION,
+  INVALID_INTENTS,
+  DISALLOWED_INTENTS,
+}
+
 export class WebSocketHandler {
   public socket!: WebSocket;
   public eventHandler = new EventHandler(this, this.client);
@@ -24,7 +57,9 @@ export class WebSocketHandler {
 
   public sequence?: number | null;
   public sessionID!: number;
-  public receivedAck = true;
+  public ackReceived = true;
+
+  public resuming = false;
 
   constructor(public client: Client) {}
 
@@ -33,59 +68,95 @@ export class WebSocketHandler {
       `${GATEWAY_BASE_URL}/?v=${GATEWAY_VERSION}&encoding=json`,
     );
 
+    if (this.resuming) {
+      this.resuming = false;
+      await this.handleResuming();
+    }
+
     for await (const payload of this.socket) {
       if (isWebSocketCloseEvent(payload)) {
-        console.log(payload);
-        return;
+        await this.handleGatewayError(payload);
       } else if (typeof payload === "string") {
         await this.handlePayload(parse(payload) as Payload);
       }
     }
   }
 
+  private async handleResuming() {
+    await this.socket.send(stringify({
+      op: Opcodes.RESUME,
+      d: {
+        token: this.client.token,
+        session_id: this.sessionID,
+        seq: this.sequence,
+      },
+    }));
+  }
+
+  private async handleReconnect() {
+    this.resuming = true;
+
+    await this.handleClose();
+    await this.handleConnecting();
+  }
+
   private async handlePayload(payload: Payload) {
     console.log(payload);
 
-    this.sequence = payload.s || null;
+    if (payload.s) this.sequence = payload.s;
 
     switch (payload.op) {
-      case 0:
+      case Opcodes.DISPATCH:
         this.eventHandler.handle(
           { data: payload.d, name: payload.t as string },
         );
         break;
-      case 10:
-        // await this.singleHeartbeat();
+      case Opcodes.INVALID_SESSION:
+        if (!payload.d) await this.handleClose();
+
+      case Opcodes.HELLO:
         this.handleHeartbeat(payload.d.heartbeat_interval);
         await this.handleIdentify();
         break;
-      case 11:
-        this.receivedAck = true;
+      case Opcodes.HEARTBEAT_ACK:
+        this.ackReceived = true;
         break;
     }
   }
 
+  private async handleClose() {
+    this.ackReceived = true;
+
+    if (this.heartbeatInterval) clearInterval(this.heartbeatInterval);
+
+    if (!this.socket.isClosed) await this.socket.close(1000);
+  }
+
   private async singleHeartbeat() {
-    if (this.receivedAck) {
+    if (this.ackReceived) {
       await this.socket.send(stringify({
-        op: 1,
+        op: Opcodes.HEARTBEAT,
         d: this.sequence,
       }));
     } else {
-      // TODO : attempt reconnecting
+      await this.handleReconnect();
     }
-    this.receivedAck = false;
+    this.ackReceived = false;
   }
 
   private handleHeartbeat(delay: number) {
-    this.heartbeatInterval = setInterval(() => {
-      this.singleHeartbeat();
+    this.heartbeatInterval = setInterval(async () => {
+      try {
+        await this.singleHeartbeat();
+      } catch (e) {
+        await this.handleReconnect();
+      }
     }, delay);
   }
 
   private async handleIdentify() {
     await this.socket.send(stringify({
-      op: 2,
+      op: Opcodes.IDENTIFY,
       d: {
         token: this.client.token,
         properties: {
@@ -96,5 +167,18 @@ export class WebSocketHandler {
         large_threshold: 250,
       },
     }));
+  }
+
+  private async handleGatewayError({ code, reason }: WebSocketCloseEvent) {
+    await this.handleClose();
+
+    switch (code) {
+      case CloseEventCodes.UNKNOWN_ERROR:
+      case CloseEventCodes.INVALID_SEQ:
+      case CloseEventCodes.RATE_LIMITED:
+        await this.handleReconnect();
+    }
+
+    this.client.events.gatewayError.post(new GatewayError(code, reason));
   }
 }
