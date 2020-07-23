@@ -113,9 +113,9 @@ export class WebSocketHandler {
         if (!payload.d) {
           await this.handleClose();
         } else {
-          await this.handleReconnect()
+          await this.handleReconnect();
         }
-
+        break;
       case Opcodes.HELLO:
         this.handleHeartbeat(payload.d.heartbeat_interval);
         await this.sendIdentify();
