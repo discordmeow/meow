@@ -1,3 +1,4 @@
+import { CacheManager } from '../managers/CacheManager.ts';
 import { UserManager } from "../managers/UserManager.ts";
 import { WebSocketHandler } from "../network/WebSocketHandler.ts";
 import { Events } from "./Events.ts";
@@ -11,10 +12,11 @@ export class Client {
   public readonly users = new UserManager(this);
   public readonly ws = new WebSocketHandler(this);
   public readonly events = new Events();
+  public cache = new CacheManager(this);
 
   constructor(public options: ClientOptions) {
     if (!options?.token) {
-      throw new Error("Client cannot be instanciated without a token");
+      throw new Error("Client cannot be instantiated without a token");
     }
 
     options.token = `Bot ${options.token}`;
