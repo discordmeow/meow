@@ -25,6 +25,6 @@ export class Client {
   }
 
   async connect() {
-    await this.ws.handleConnecting();
+    await this.ws.connect();
   }
 }
