@@ -8,6 +8,7 @@ import {
 import { GATEWAY_BASE_URL, GATEWAY_VERSION } from "../util/Constants.ts";
 import { EventHandler } from "./EventHandler.ts";
 import { GatewayError } from "../errors/GatewayError.ts";
+import { Guild } from "../models/Guild.ts";
 
 const { stringify, parse } = JSON;
 
@@ -61,6 +62,8 @@ export class WebSocketHandler {
 
   public resuming = false;
 
+  public initialUnavailableGuilds!: Set<string>;
+
   constructor(public client: Client) {}
 
   public async connect() {
@@ -108,6 +111,9 @@ export class WebSocketHandler {
         this.eventHandler.handle(
           { data: payload.d, name: payload.t as string },
         );
+        break;
+      case Opcodes.RECONNECT:
+        await this.handleReconnect();
         break;
       case Opcodes.INVALID_SESSION:
         if (!payload.d) {
