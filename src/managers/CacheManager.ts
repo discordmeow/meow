@@ -1,4 +1,5 @@
 import { Client } from "../client/Client.ts";
+import { Channel } from "../models/Channel.ts";
 import { Emoji } from "../models/Emoji.ts";
 import { Guild } from "../models/Guild.ts";
 import { Role } from "../models/Role.ts";
@@ -7,12 +8,16 @@ import { User } from "../models/User.ts";
 export class CacheManager {
   /** Map containing every cached users */
   public users: Map<string, User> = new Map<string, User>();
+  /** Map containing every cached guilds */
   public guilds: Map<string, Guild> = new Map<string, Guild>();
+  /** Map containing every cached emojis */
   public emojis: Map<string, Emoji> = new Map<string, Emoji>();
+  /** Map containing every cached channels */
+  public channels: Map<string, Channel> = new Map<string, Channel>();
 
   constructor(public client: Client) {}
 
-  /** Cache a User (update the user if it is already cached) */
+  /** Cache an User */
   public cacheUser(structure: any): User {
     const cached: User | undefined = this.users.get(structure.id);
     if (cached) return this.patchUser(cached, structure);
@@ -37,6 +42,7 @@ export class CacheManager {
     return user;
   }
 
+  /** Cache an Emoji */
   public cacheEmoji(structure: any, guild: Guild): Emoji {
     const cached: Emoji | undefined = this.emojis.get(structure.id);
     if (cached) return this.patchEmoji(cached, structure);
@@ -47,6 +53,7 @@ export class CacheManager {
     return toCache;
   }
 
+  /** Update a cached Emoji */
   public patchEmoji(emoji: Emoji, structure: any): Emoji {
     if (structure.name) emoji.name = structure.name;
     if (structure.user) emoji.user = this.cacheUser(structure.user);
@@ -65,6 +72,7 @@ export class CacheManager {
     return emoji;
   }
 
+  /** Cache a Guild */
   public cacheGuild(structure: any): Guild {
     const cached: Guild | undefined = this.guilds.get(structure.id);
     if (cached) return this.patchGuild(cached, structure);
@@ -75,9 +83,26 @@ export class CacheManager {
     return toCache;
   }
 
+  /** Update a cached Guild */
   public patchGuild(guild: Guild, structure: any): Guild {
-    if (structure.name) guild.name = structure.name;
+    // todo(n1c00o): patcher with Guild props
 
     return guild;
+  }
+
+  /** Cache a Channel */
+  public cacheChannel(structure: any): Channel {
+    const cached: Channel | undefined = this.channels.get(structure.id);
+    if (cached) return this.patchChannel(cached, structure);
+
+    const toCache: Channel = new Channel(structure, this.client);
+    this.channels.set(toCache.id, toCache);
+    return toCache;
+  }
+
+  /** Update a cached Channel */
+  public patchChannel(channel: Channel, structure: any): Channel {
+    // todo(n1c00o): patcher for Channel
+    return channel;
   }
 }
