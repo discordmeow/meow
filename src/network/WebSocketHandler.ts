@@ -1,48 +1,63 @@
-import { Client } from "../client/Client.ts";
+import { Client, ClientOptions } from "../client/Client.ts";
 import {
   WebSocket,
   connectWebSocket,
   isWebSocketCloseEvent,
 } from "../../deps.ts";
 import { GATEWAY_BASE_URL, GATEWAY_VERSION } from "../util/Constants.ts";
+import { EventHandler } from "./EventHandler.ts";
+
+const { stringify, parse } = JSON;
 
 export interface Payload {
   op: number;
-  d: {
-    [key: string]: any;
-  };
+  d: any;
   s?: number;
   t?: string;
 }
 
 export class WebSocketHandler {
-  socket!: WebSocket;
-  heartbeatInterval!: number;
+  public socket!: WebSocket;
+  public eventHandler = new EventHandler(this, this.client);
 
-  sequence: number | null = null;
-  receivedAck = true;
+  public heartbeatInterval!: number;
+
+  public sequence?: number | null;
+  public sessionID!: number;
+  public receivedAck = true;
 
   constructor(public client: Client) {}
 
-  async connect() {
+  public async handleConnecting() {
     this.socket = await connectWebSocket(
       `${GATEWAY_BASE_URL}/?v=${GATEWAY_VERSION}&encoding=json`,
     );
 
-    for await (const msg of this.socket) {
-      console.log(msg);
-      if (isWebSocketCloseEvent(msg)) {
+    for await (const payload of this.socket) {
+      if (isWebSocketCloseEvent(payload)) {
+        console.log(payload);
         return;
-      } else if (typeof msg === "string") {
-        await this.handlePayload(JSON.parse(msg) as Payload);
+      } else if (typeof payload === "string") {
+        await this.handlePayload(parse(payload) as Payload);
       }
     }
   }
 
-  async handlePayload(payload: Payload) {
+  private async handlePayload(payload: Payload) {
+    console.log(payload);
+
+    this.sequence = payload.s || null;
+
     switch (payload.op) {
+      case 0:
+        this.eventHandler.handle(
+          { data: payload.d, name: payload.t as string },
+        );
+        break;
       case 10:
-        await this.handleHeartbeat(payload.d.heartbeat_interval);
+        // await this.singleHeartbeat();
+        this.handleHeartbeat(payload.d.heartbeat_interval);
+        await this.handleIdentify();
         break;
       case 11:
         this.receivedAck = true;
@@ -50,9 +65,9 @@ export class WebSocketHandler {
     }
   }
 
-  async singleHeartbeat() {
+  private async singleHeartbeat() {
     if (this.receivedAck) {
-      await this.socket.send(JSON.stringify({
+      await this.socket.send(stringify({
         op: 1,
         d: this.sequence,
       }));
@@ -62,9 +77,24 @@ export class WebSocketHandler {
     this.receivedAck = false;
   }
 
-  async handleHeartbeat(delay: number) {
+  private handleHeartbeat(delay: number) {
     this.heartbeatInterval = setInterval(() => {
       this.singleHeartbeat();
     }, delay);
+  }
+
+  private async handleIdentify() {
+    await this.socket.send(stringify({
+      op: 2,
+      d: {
+        token: this.client.token,
+        properties: {
+          "$os": "linux",
+          "$browser": "meow",
+          "$device": "meow",
+        },
+        large_threshold: 250,
+      },
+    }));
   }
 }
