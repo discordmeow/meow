@@ -1,6 +1,6 @@
 import { UserManager } from "../managers/UserManager.ts";
 import { WebSocketHandler } from "../network/WebSocketHandler.ts";
-import { Events } from "./Events.ts";
+import { ClientEvents } from "./ClientEvents.ts";
 
 export interface ClientOptions {
   token: string;
@@ -10,7 +10,7 @@ export class Client {
   public readonly token: string;
   public readonly users = new UserManager(this);
   public readonly ws = new WebSocketHandler(this);
-  public readonly events = new Events();
+  public readonly events = new ClientEvents();
 
   constructor(public options: ClientOptions) {
     if (!options?.token) {
