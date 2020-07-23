@@ -1,4 +1,4 @@
-import { Client } from '../client/Client.ts';
+import { Client } from "../client/Client.ts";
 
 export class User {
   /** The user's ID */
@@ -17,31 +17,18 @@ export class User {
   public mfaEnabled?: boolean;
   /** The user's chosen language option */
   public locale?: string;
-  // /** The flags on a user's account */
-  // readonly flags?: number;
   /** The type of Nitro subscription on a user's account */
   public premiumType?: number;
-  /** he public flags on a user's account */
+  /** The public flags on a user's account */
   public publicFlags?: number;
 
   constructor(structure: any, public client: Client) {
     this.id = structure.id;
-    this.username = structure.username;
 
-    if (!this.isPartial) {
-      this.discriminator = structure.discriminator;
-      this.avatarHash = structure.avatar;
-      this.bot = structure.bot;
-      this.system = structure.system;
-      this.mfaEnabled = structure.mfa_enabled;
-      this.locale = structure.locale;
-      // this.flags = structure.flags;
-      this.premiumType = structure.premium_type;
-      this.publicFlags = structure.public_flags;
-    }
+    client.cache.patchUser(this, structure);
   }
 
   get isPartial(): boolean {
-    return typeof this.username !== 'undefined';
+    return typeof this.username !== "undefined";
   }
 }
