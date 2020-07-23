@@ -26,8 +26,3 @@ export class Client {
     await this.ws.handleConnecting();
   }
 }
-
-const client = new Client(
-  { token: "NzM1NTQ4OTE3MzQwNzAwNzAz.XxjVAA.7qXvYxLS9fR57_om2XqoojqPaIk" },
-);
-await client.connect();
