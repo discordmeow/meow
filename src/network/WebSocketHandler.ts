@@ -63,14 +63,14 @@ export class WebSocketHandler {
 
   constructor(public client: Client) {}
 
-  public async handleConnecting() {
+  public async connect() {
     this.socket = await connectWebSocket(
       `${GATEWAY_BASE_URL}/?v=${GATEWAY_VERSION}&encoding=json`,
     );
 
     if (this.resuming) {
       this.resuming = false;
-      await this.handleResuming();
+      await this.sendResume();
     }
 
     for await (const payload of this.socket) {
@@ -82,7 +82,7 @@ export class WebSocketHandler {
     }
   }
 
-  private async handleResuming() {
+  private async sendResume() {
     await this.socket.send(stringify({
       op: Opcodes.RESUME,
       d: {
@@ -97,12 +97,10 @@ export class WebSocketHandler {
     this.resuming = true;
 
     await this.handleClose();
-    await this.handleConnecting();
+    await this.connect();
   }
 
   private async handlePayload(payload: Payload) {
-    console.log(payload);
-
     if (payload.s) this.sequence = payload.s;
 
     switch (payload.op) {
@@ -112,11 +110,15 @@ export class WebSocketHandler {
         );
         break;
       case Opcodes.INVALID_SESSION:
-        if (!payload.d) await this.handleClose();
+        if (!payload.d) {
+          await this.handleClose();
+        } else {
+          await this.handleReconnect()
+        }
 
       case Opcodes.HELLO:
         this.handleHeartbeat(payload.d.heartbeat_interval);
-        await this.handleIdentify();
+        await this.sendIdentify();
         break;
       case Opcodes.HEARTBEAT_ACK:
         this.ackReceived = true;
@@ -132,7 +134,7 @@ export class WebSocketHandler {
     if (!this.socket.isClosed) await this.socket.close(1000);
   }
 
-  private async singleHeartbeat() {
+  private async sendHeartbeat() {
     if (this.ackReceived) {
       await this.socket.send(stringify({
         op: Opcodes.HEARTBEAT,
@@ -147,14 +149,14 @@ export class WebSocketHandler {
   private handleHeartbeat(delay: number) {
     this.heartbeatInterval = setInterval(async () => {
       try {
-        await this.singleHeartbeat();
+        await this.sendHeartbeat();
       } catch (e) {
         await this.handleReconnect();
       }
     }, delay);
   }
 
-  private async handleIdentify() {
+  private async sendIdentify() {
     await this.socket.send(stringify({
       op: Opcodes.IDENTIFY,
       d: {
