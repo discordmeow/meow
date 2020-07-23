@@ -1,17 +1,6 @@
 import { Client } from "../client/Client.ts";
 import { Guild } from "./Guild.ts";
 
-export interface ReceivedRoleStructure {
-  id: string;
-  name: string;
-  color: number;
-  hoist: boolean;
-  position: number;
-  permissions: number;
-  managed: boolean;
-  mentionable: boolean;
-}
-
 export class Role {
   public readonly id: string;
   public name: string;
@@ -23,7 +12,7 @@ export class Role {
   public mentionable: boolean;
 
   constructor(
-    structure: ReceivedRoleStructure,
+    structure: any,
     public guild: Guild,
     public client: Client,
   ) {
