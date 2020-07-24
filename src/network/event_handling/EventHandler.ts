@@ -99,11 +99,11 @@ export class EventHandler {
 
   private handleChannelDelete(data: RawChannel) {
     const channel: Channel = this.client.cache.channels.get(data.id) as Channel;
-    if (channel.guildID) {
-      this.client.cache.guilds.get(channel.guildID)?.channels.delete(
-        channel.id,
-      );
-    }
+
+    channel.guild?.channels.delete(
+      channel.id,
+    );
+
     this.client.cache.channels.delete(channel.id);
     this.client.events.channelDelete.post(channel);
   }
