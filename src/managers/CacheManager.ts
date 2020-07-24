@@ -10,7 +10,11 @@ import {
   RawRole,
   RawEmoji,
   RawChannel,
+  RawVoiceState,
+  RawGuildMember,
 } from "../network/event_handling/RawStructures.ts";
+import { GuildMember } from "../models/GuildMember.ts";
+import { VoiceState } from "../models/VoiceState.ts";
 
 export class CacheManager {
   /** Map containing every cached users */
@@ -122,6 +126,29 @@ export class CacheManager {
       guild.applicationID = structure.application_id;
     }
     if (structure.member_count) guild.memberCount = structure.member_count;
+
+    return guild;
+  }
+
+  public loadFullGuild(guild: Guild, structure: RawGuild) {
+    ((structure.roles) as RawRole[]).map((role): void => {
+      guild.roles.set(role.id, new Role(role, guild, this.client));
+    });
+    ((structure.emojis) as RawEmoji[]).map((emoji): void => {
+      guild.emojis.set(emoji.id as string, this.addEmoji(emoji, guild));
+    });
+
+    ((structure.voice_states) as RawVoiceState[]).map((voiceState): void => {
+      guild.voiceStates.push(new VoiceState(voiceState, guild, this.client));
+    });
+
+    ((structure.members) as RawGuildMember[]).map((member): void => {
+      guild.members.set(((member.user) as RawUser).id, new GuildMember(member, guild, this.client));
+    });
+
+    ((structure.channels) as RawChannel[]).map((channel): void => {
+      guild.channels.set(channel.id, this.addChannel(channel));
+    });
 
     return guild;
   }
