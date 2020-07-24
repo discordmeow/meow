@@ -1,6 +1,7 @@
-import { WebSocketHandler } from "./WebSocketHandler.ts";
-import { Client } from "../client/Client.ts";
-import { Guild } from "../models/Guild.ts";
+import { WebSocketHandler } from "../WebSocketHandler.ts";
+import { Client } from "../../client/Client.ts";
+import { Guild } from "../../models/Guild.ts";
+import { RawReadyStructure } from "./RawStructures.ts";
 
 export interface EventData {
   name: string;
@@ -52,14 +53,8 @@ export class EventHandler {
   public handle({ name, data }: EventData) {
     switch (name) {
       case EventTypes.READY:
-        this.ws.sessionID = data.session_id;
+        this.handleReady(data);
 
-        (data.guilds as Guild[]).forEach((guild) => {
-          this.client.cache.cacheGuild(data);
-          this.ws.initialUnavailableGuilds.add(guild.id);
-        });
-
-        this.client.events.ready.post();
         break;
       case EventTypes.GUILD_CREATE:
         const guild = this.client.cache.cacheGuild(data);
@@ -86,5 +81,16 @@ export class EventHandler {
         }
         break;
     }
+  }
+
+  private handleReady(data: RawReadyStructure) {
+    this.ws.sessionID = data.session_id;
+
+    data.guilds.forEach((guild) => {
+      this.client.cache.cacheGuild(guild);
+      this.ws.initialUnavailableGuilds.add(guild.id);
+    });
+
+    this.client.events.ready.post();
   }
 }
