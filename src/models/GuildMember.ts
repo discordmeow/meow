@@ -18,7 +18,7 @@ export class GuildMember {
   /** whether the user is deafened in voice channels */
   public mute: boolean;
   constructor(structure: any, public guild: Guild, public client: Client) {
-    if (structure.user) this.user = client.cache.cacheUser(structure.user);
+    if (structure.user) this.user = client.cache.addUser(structure.user);
     this.nick = structure.nick;
     this.roles = structure.roles;
     this.joinedAt = structure.joined_at;

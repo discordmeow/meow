@@ -22,7 +22,7 @@ export class UserManager {
     return USER_AVATAR(
       {
         userID: user.id,
-        avatarHash: user.avatarHash as string,
+        avatarHash: user.avatar as string,
         format: options.format,
         size: options.size,
         dynamic: options.dynamic,
