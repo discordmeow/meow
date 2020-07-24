@@ -4,6 +4,12 @@ import { Emoji } from "../models/Emoji.ts";
 import { Guild } from "../models/Guild.ts";
 import { Role } from "../models/Role.ts";
 import { User } from "../models/User.ts";
+import {
+  RawGuild,
+  RawUser,
+  RawRole,
+  RawEmoji,
+} from "../network/event_handling/RawStructures.ts";
 
 export class CacheManager {
   /** Map containing every cached users */
@@ -30,7 +36,7 @@ export class CacheManager {
   }
 
   /** Update a cached user */
-  public patchUser(user: User, structure: any): User {
+  public patchUser(user: User, structure: RawUser): User {
     if (structure.username) user.username = structure.username;
     if (structure.discriminator) user.discriminator = structure.discriminator;
     if (structure.avatar) user.avatar = structure.avatar;
@@ -40,12 +46,13 @@ export class CacheManager {
     if (structure.locale) user.locale = structure.locale;
     if (structure.premium_type) user.premiumType = structure.premium_type;
     if (structure.public_flags) user.publicFlags = structure.public_flags;
+
     return user;
   }
 
   /** Cache an Emoji */
-  public addEmoji(structure: any, guild: Guild): Emoji {
-    const cached: Emoji | undefined = this.emojis.get(structure.id);
+  public addEmoji(structure: RawEmoji, guild: Guild): Emoji {
+    const cached: Emoji | undefined = this.emojis.get(structure.id as string);
     if (cached) return this.patchEmoji(cached, structure);
 
     const toCache: Emoji = new Emoji(structure, guild, this.client);
@@ -55,7 +62,7 @@ export class CacheManager {
   }
 
   /** Update a cached Emoji */
-  public patchEmoji(emoji: Emoji, structure: any): Emoji {
+  public patchEmoji(emoji: Emoji, structure: RawEmoji): Emoji {
     if (structure.name) emoji.name = structure.name;
     if (structure.user) emoji.user = this.addUser(structure.user);
     if (structure.managed) emoji.managed = structure.managed;
@@ -65,8 +72,8 @@ export class CacheManager {
       emoji.requireColons = structure.require_colons;
     }
     if (structure.roles) {
-      emoji.roles = structure.roles.map((role: any): Role => {
-        return <Role> emoji.guild.roles.get(role.id);
+      structure.roles.forEach((roleID) => {
+        emoji.roles.set(roleID, emoji.guild.roles.get(roleID) as Role);
       });
     }
 
@@ -74,7 +81,7 @@ export class CacheManager {
   }
 
   /** Cache a Guild */
-  public addGuild(structure: any): Guild {
+  public addGuild(structure: RawGuild): Guild {
     const cached: Guild | undefined = this.guilds.get(structure.id);
     if (cached) return this.patchGuild(cached, structure);
 
@@ -85,8 +92,35 @@ export class CacheManager {
   }
 
   /** Update a cached Guild */
-  public patchGuild(guild: Guild, structure: any): Guild {
-    // todo(): patcher with Guild props
+  public patchGuild(guild: Guild, structure: RawGuild): Guild {
+    if (structure.name) guild.name = structure.name;
+    if (structure.icon) guild.icon = structure.icon;
+    if (structure.splash) guild.splash = structure.splash;
+    if (structure.discovery_splash) {
+      guild.discoverySplash = structure.discovery_splash;
+    }
+    if (structure.owner) guild.owner = structure.owner;
+    if (structure.owner_id) guild.ownerID = structure.owner_id;
+    if (structure.permissions) guild.permissions = structure.permissions;
+    if (structure.region) guild.region = structure.region;
+    if (structure.afk_channel_id) guild.afkChannelID = structure.afk_channel_id;
+    if (structure.afk_timeout) guild.afkTimeout = structure.afk_timeout;
+    if (structure.verification_level) {
+      guild.verificationLevel = structure.verification_level;
+    }
+    if (structure.default_message_notifications) {
+      guild.defaultMessageNotifications =
+        structure.default_message_notifications;
+    }
+    if (structure.explicit_content_filter) {
+      guild.explicitContentFilter = structure.explicit_content_filter;
+    }
+    if (structure.features) guild.features = structure.features;
+    if (structure.mfa_level) guild.mfaLevel = structure.mfa_level;
+    if (structure.application_id) {
+      guild.applicationID = structure.application_id;
+    }
+    if (structure.member_count) guild.memberCount = structure.member_count;
 
     return guild;
   }
