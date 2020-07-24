@@ -20,7 +20,7 @@ export class CacheManager {
   constructor(public client: Client) {}
 
   /** Cache an User */
-  public cacheUser(structure: any): User {
+  public addUser(structure: any): User {
     const cached: User | undefined = this.users.get(structure.id);
     if (cached) return this.patchUser(cached, structure);
 
@@ -40,12 +40,11 @@ export class CacheManager {
     if (structure.locale) user.locale = structure.locale;
     if (structure.premium_type) user.premiumType = structure.premium_type;
     if (structure.public_flags) user.publicFlags = structure.public_flags;
-
     return user;
   }
 
   /** Cache an Emoji */
-  public cacheEmoji(structure: any, guild: Guild): Emoji {
+  public addEmoji(structure: any, guild: Guild): Emoji {
     const cached: Emoji | undefined = this.emojis.get(structure.id);
     if (cached) return this.patchEmoji(cached, structure);
 
@@ -58,7 +57,7 @@ export class CacheManager {
   /** Update a cached Emoji */
   public patchEmoji(emoji: Emoji, structure: any): Emoji {
     if (structure.name) emoji.name = structure.name;
-    if (structure.user) emoji.user = this.cacheUser(structure.user);
+    if (structure.user) emoji.user = this.addUser(structure.user);
     if (structure.managed) emoji.managed = structure.managed;
     if (structure.animated) emoji.animated = structure.animated;
     if (structure.available) emoji.available = structure.available;
@@ -75,7 +74,7 @@ export class CacheManager {
   }
 
   /** Cache a Guild */
-  public cacheGuild(structure: any): Guild {
+  public addGuild(structure: any): Guild {
     const cached: Guild | undefined = this.guilds.get(structure.id);
     if (cached) return this.patchGuild(cached, structure);
 
@@ -87,13 +86,13 @@ export class CacheManager {
 
   /** Update a cached Guild */
   public patchGuild(guild: Guild, structure: any): Guild {
-    // todo(n1c00o): patcher with Guild props
+    // todo(): patcher with Guild props
 
     return guild;
   }
 
   /** Cache a Channel */
-  public cacheChannel(structure: any): Channel {
+  public addChannel(structure: any): Channel {
     const cached: Channel | undefined = this.channels.get(structure.id);
     if (cached) return this.patchChannel(cached, structure);
 
@@ -104,7 +103,7 @@ export class CacheManager {
 
   /** Update a cached Channel */
   public patchChannel(channel: Channel, structure: any): Channel {
-    // todo(n1c00o): patcher for Channel
+    // todo(): patcher for Channel
     return channel;
   }
 }
