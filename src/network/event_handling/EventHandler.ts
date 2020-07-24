@@ -1,6 +1,7 @@
-import { WebSocketHandler } from "../WebSocketHandler.ts";
 import { Client } from "../../client/Client.ts";
-import { RawReadyEvent, RawGuild } from "./RawStructures.ts";
+import { Channel } from "../../models/Channel.ts";
+import { WebSocketHandler } from "../WebSocketHandler.ts";
+import { RawChannel, RawGuild, RawReadyEvent } from "./RawStructures.ts";
 
 export interface EventData {
   name: string;
@@ -11,7 +12,7 @@ export enum EventTypes {
   READY = "READY",
   RESUMED = "RESUMED",
   CHANNEL_CREATE = "CHANNEL_CREATE",
-  CHANNEL_UDPATE = "CHANNEL_UPDATE",
+  CHANNEL_UPDATE = "CHANNEL_UPDATE",
   CHANNEL_DELETE = "CHANNEL_DELETE",
   CHANNEL_PINS_UPDATE = "CHANNEL_PINS_UPDATE",
   GUILD_CREATE = "GUILD_CREATE",
@@ -53,11 +54,18 @@ export class EventHandler {
     switch (name) {
       case EventTypes.READY:
         this.handleReady(data);
-
         break;
       case EventTypes.GUILD_CREATE:
         this.handleGuildCreate(data);
-
+        break;
+      case EventTypes.CHANNEL_CREATE:
+        this.handleChannelCreate(data);
+        break;
+      case EventTypes.CHANNEL_UPDATE:
+        this.handleChannelUpdate(data);
+        break;
+      case EventTypes.CHANNEL_DELETE:
+        this.handleChannelDelete(data);
         break;
     }
   }
@@ -71,6 +79,31 @@ export class EventHandler {
     });
 
     this.client.events.ready.post();
+  }
+
+  private handleChannelCreate(data: RawChannel) {
+    const channel: Channel = this.client.cache.addChannel(data);
+    if (channel.guildID) {
+      this.client.cache.guilds.get(channel.guildID)?.channels.set(
+        channel.id,
+        channel,
+      );
+    }
+    this.client.events.channelCreate.post(channel);
+  }
+
+  private handleChannelUpdate(data: RawChannel) {
+    const channel: Channel = this.client.cache.addChannel(data);
+    this.client.events.channelUpdate.post(channel);
+  }
+
+  private handleChannelDelete(data: RawChannel) {
+    const channel: Channel = <Channel> this.client.cache.channels.get(data.id);
+    if (channel.guildID) {
+      this.client.cache.addGuild(channel.guildID)?.channels.delete(channel.id);
+    }
+    this.client.cache.channels.delete(channel.id);
+    this.client.events.channelDelete.post(channel);
   }
 
   private handleGuildCreate(data: RawGuild) {
