@@ -1,6 +1,7 @@
 import { Client } from "../client/Client.ts";
 import { Resolver } from "../util/Resolver.ts";
-import { User } from './User.ts';
+import { User } from "./User.ts";
+import { Guild } from "./Guild.ts";
 
 export type ChannelTypes =
   | "GUILD_TEXT"
@@ -11,12 +12,12 @@ export type ChannelTypes =
   | "GUILD_NEWS"
   | "GUILD_STORE";
 
-  export interface Overwrite {
-    id: string;
-    type: "role" | "member";
-    allow: number;
-    deny: number;
-  }
+export interface Overwrite {
+  id: string;
+  type: "role" | "member";
+  allow: number;
+  deny: number;
+}
 
 export class Channel {
   /** the id of this channel */
@@ -83,6 +84,14 @@ export class Channel {
   }
 
   get isPartial(): boolean {
-    return typeof this.lastMessageID === 'undefined';
+    return typeof this.lastMessageID === "undefined";
+  }
+
+  get guild(): Guild | undefined {
+    if (!this.guildID) {
+      return;
+    }
+
+    return this.client.cache.guilds.get(this.guildID) as Guild;
   }
 }
