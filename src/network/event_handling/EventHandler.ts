@@ -1,7 +1,6 @@
 import { WebSocketHandler } from "../WebSocketHandler.ts";
 import { Client } from "../../client/Client.ts";
-import { Guild } from "../../models/Guild.ts";
-import { RawReadyStructure } from "./RawStructures.ts";
+import { RawReadyEvent, RawGuild } from "./RawStructures.ts";
 
 export interface EventData {
   name: string;
@@ -63,7 +62,7 @@ export class EventHandler {
     }
   }
 
-  private handleReady({ session_id, guilds }: RawReadyStructure) {
+  private handleReady({ session_id, guilds }: RawReadyEvent) {
     this.ws.sessionID = session_id;
 
     guilds.forEach((guild) => {
@@ -74,7 +73,7 @@ export class EventHandler {
     this.client.events.ready.post();
   }
 
-  private handleGuildCreate(data: any) {
+  private handleGuildCreate(data: RawGuild) {
     const guild = this.client.cache.cacheGuild(data);
 
     if (
