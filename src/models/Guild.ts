@@ -79,29 +79,6 @@ export class Guild {
   constructor(structure: RawGuild, public client: Client) {
     this.id = structure.id;
 
-    structure.roles.map((role: any): void => {
-      this.roles.set(role.id, new Role(role, this, client));
-    });
-    structure.emojis.map((emoji: any): void => {
-      this.emojis.set(emoji.id, client.cache.addEmoji(emoji, this));
-    });
-
-    if (structure.voice_states) {
-      structure.voice_states.map((voiceState: any): void => {
-        this.voiceStates.push(new VoiceState(voiceState, this, client));
-      });
-    }
-    if (structure.members) {
-      structure.members.map((member: any): void => {
-        this.members.set(member.user.id, new GuildMember(member, this, client));
-      });
-    }
-    if (structure.channels) {
-      structure.channels.map((channel: any): void => {
-        this.channels.set(channel.id, client.cache.addChannel(channel));
-      });
-    }
-
     client.cache.patchGuild(this, structure);
   }
 }
