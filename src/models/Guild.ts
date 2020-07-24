@@ -105,7 +105,7 @@ export class Guild {
       this.roles.set(role.id, new Role(role, this, client));
     });
     structure.emojis.map((emoji: any): void => {
-      this.emojis.set(emoji.id, client.cache.cacheEmoji(emoji, this));
+      this.emojis.set(emoji.id, client.cache.addEmoji(emoji, this));
     });
     this.features = structure.features;
     this.mfaLevel = structure.mfa_level;
@@ -131,11 +131,8 @@ export class Guild {
     }
     if (structure.channels) {
       structure.channels.map((channel: any): void => {
-        this.channels.set(channel.id, client.cache.cacheChannel(channel));
+        this.channels.set(channel.id, client.cache.addChannel(channel));
       });
     }
   }
 }
-
-// todo(n1c00o): End of the structure
-// ! Please don't touch to this file
