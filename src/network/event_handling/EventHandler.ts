@@ -83,10 +83,10 @@ export class EventHandler {
     }
   }
 
-  private handleReady(data: RawReadyStructure) {
-    this.ws.sessionID = data.session_id;
+  private handleReady({ session_id, guilds }: RawReadyStructure) {
+    this.ws.sessionID = session_id;
 
-    data.guilds.forEach((guild) => {
+    guilds.forEach((guild) => {
       this.client.cache.cacheGuild(guild);
       this.ws.initialUnavailableGuilds.add(guild.id);
     });
