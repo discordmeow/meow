@@ -57,28 +57,8 @@ export class EventHandler {
 
         break;
       case EventTypes.GUILD_CREATE:
-        const guild = this.client.cache.cacheGuild(data);
+        this.handleGuildCreate(data);
 
-        if (
-          !this.client.cache.unavailableGuilds.has(data.id) &&
-          !data.unavailable && !this.ws.initialUnavailableGuilds.has(data.id)
-        ) {
-          this.client.events.guildCreate.post(guild);
-        } else if (
-          this.client.cache.unavailableGuilds.has(data.id) && !data.unavailable
-        ) {
-          this.client.cache.unavailableGuilds.delete(data.id);
-
-          this.client.events.guildAvailable.post(guild);
-        } else if (data.unavailable) {
-          this.client.cache.unavailableGuilds.add(data.id);
-
-          this.client.events.guildUnavailable.post(guild);
-        }
-
-        if (this.ws.initialUnavailableGuilds.has(data.id)) {
-          this.ws.initialUnavailableGuilds.delete(data.id);
-        }
         break;
     }
   }
@@ -92,5 +72,30 @@ export class EventHandler {
     });
 
     this.client.events.ready.post();
+  }
+
+  private handleGuildCreate(data: any) {
+    const guild = this.client.cache.cacheGuild(data);
+
+    if (
+      !this.client.cache.unavailableGuilds.has(data.id) &&
+      !data.unavailable && !this.ws.initialUnavailableGuilds.has(data.id)
+    ) {
+      this.client.events.guildCreate.post(guild);
+    } else if (
+      this.client.cache.unavailableGuilds.has(data.id) && !data.unavailable
+    ) {
+      this.client.cache.unavailableGuilds.delete(data.id);
+
+      this.client.events.guildAvailable.post(guild);
+    } else if (data.unavailable) {
+      this.client.cache.unavailableGuilds.add(data.id);
+
+      this.client.events.guildUnavailable.post(guild);
+    }
+
+    if (this.ws.initialUnavailableGuilds.has(data.id)) {
+      this.ws.initialUnavailableGuilds.delete(data.id);
+    }
   }
 }
