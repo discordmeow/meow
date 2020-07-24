@@ -9,6 +9,7 @@ import {
   RawUser,
   RawRole,
   RawEmoji,
+  RawChannel,
 } from "../network/event_handling/RawStructures.ts";
 
 export class CacheManager {
@@ -26,7 +27,7 @@ export class CacheManager {
   constructor(public client: Client) {}
 
   /** Cache an User */
-  public addUser(structure: any): User {
+  public addUser(structure: RawUser): User {
     const cached: User | undefined = this.users.get(structure.id);
     if (cached) return this.patchUser(cached, structure);
 
@@ -126,7 +127,7 @@ export class CacheManager {
   }
 
   /** Cache a Channel */
-  public addChannel(structure: any): Channel {
+  public addChannel(structure: RawChannel): Channel {
     const cached: Channel | undefined = this.channels.get(structure.id);
     if (cached) return this.patchChannel(cached, structure);
 
@@ -136,8 +137,9 @@ export class CacheManager {
   }
 
   /** Update a cached Channel */
-  public patchChannel(channel: Channel, structure: any): Channel {
+  public patchChannel(channel: Channel, structure: RawChannel): Channel {
     // todo(): patcher for Channel
+
     return channel;
   }
 }
