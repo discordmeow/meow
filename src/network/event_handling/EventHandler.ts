@@ -110,6 +110,7 @@ export class EventHandler {
 
   private handleGuildCreate(data: RawGuild) {
     const guild = this.client.cache.addGuild(data);
+    this.client.cache.loadFullGuild(guild, data);
 
     if (
       !this.client.cache.unavailableGuilds.has(data.id) &&
