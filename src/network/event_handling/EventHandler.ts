@@ -74,7 +74,7 @@ export class EventHandler {
     this.ws.sessionID = session_id;
 
     guilds.forEach((guild) => {
-      this.client.cache.addGuild(guild);
+      this.client.cache.addGuild(guild as RawGuild);
       this.ws.initialUnavailableGuilds.add(guild.id);
     });
 
@@ -98,9 +98,11 @@ export class EventHandler {
   }
 
   private handleChannelDelete(data: RawChannel) {
-    const channel: Channel = <Channel> this.client.cache.channels.get(data.id);
+    const channel: Channel = this.client.cache.channels.get(data.id) as Channel;
     if (channel.guildID) {
-      this.client.cache.addGuild(channel.guildID)?.channels.delete(channel.id);
+      this.client.cache.guilds.get(channel.guildID)?.channels.delete(
+        channel.id,
+      );
     }
     this.client.cache.channels.delete(channel.id);
     this.client.events.channelDelete.post(channel);
