@@ -8,7 +8,7 @@ export class User {
   /** The user's 4-digit discord-tag */
   public discriminator?: string;
   /** The user's avatar hash */
-  public avatarHash?: string;
+  public avatar?: string;
   /** Whether the user belongs to an OAuth2 application */
   public bot?: boolean;
   /** Whether the user is an Official Discord System user (part of the urgent message system) */

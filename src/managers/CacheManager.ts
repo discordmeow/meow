@@ -33,7 +33,7 @@ export class CacheManager {
   public patchUser(user: User, structure: any): User {
     if (structure.username) user.username = structure.username;
     if (structure.discriminator) user.discriminator = structure.discriminator;
-    if (structure.avatar) user.avatarHash = structure.avatar;
+    if (structure.avatar) user.avatar = structure.avatar;
     if (structure.bot) user.bot = Boolean(structure.bot);
     if (structure.system) user.system = Boolean(structure.system);
     if (structure.mfa_enabled) user.mfaEnabled = Boolean(structure.mfa_enabled);
