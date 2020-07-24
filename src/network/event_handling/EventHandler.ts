@@ -66,7 +66,7 @@ export class EventHandler {
     this.ws.sessionID = session_id;
 
     guilds.forEach((guild) => {
-      this.client.cache.cacheGuild(guild);
+      this.client.cache.addGuild(guild);
       this.ws.initialUnavailableGuilds.add(guild.id);
     });
 
@@ -74,7 +74,7 @@ export class EventHandler {
   }
 
   private handleGuildCreate(data: RawGuild) {
-    const guild = this.client.cache.cacheGuild(data);
+    const guild = this.client.cache.addGuild(data);
 
     if (
       !this.client.cache.unavailableGuilds.has(data.id) &&
