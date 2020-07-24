@@ -1,6 +1,6 @@
 import { Client } from "../client/Client.ts";
 import { Channel } from "../models/Channel.ts";
-import { Emoji } from "../models/Emoji.ts";
+import { GuildEmoji } from "../models/GuildEmoji.ts";
 import { Guild } from "../models/Guild.ts";
 import { Role } from "../models/Role.ts";
 import { User } from "../models/User.ts";
@@ -18,7 +18,7 @@ export class CacheManager {
   /** Map containing every cached guilds */
   public guilds: Map<string, Guild> = new Map();
   /** Map containing every cached emojis */
-  public emojis: Map<string, Emoji> = new Map();
+  public emojis: Map<string, GuildEmoji> = new Map();
   /** Map containing every cached channels */
   public channels: Map<string, Channel> = new Map();
   /** Set containing IDs of unavailable guilds */
@@ -52,20 +52,20 @@ export class CacheManager {
   }
 
   /** Cache an Emoji */
-  public addEmoji(structure: RawEmoji, guild: Guild): Emoji {
-    const cached: Emoji | undefined = this.emojis.get(structure.id as string);
+  public addEmoji(structure: RawEmoji, guild: Guild): GuildEmoji {
+    const cached: GuildEmoji | undefined = this.emojis.get(structure.id as string);
     if (cached) return this.patchEmoji(cached, structure);
 
-    const toCache: Emoji = new Emoji(structure, guild, this.client);
+    const toCache: GuildEmoji = new GuildEmoji(structure, guild, this.client);
     this.emojis.set(toCache.id, toCache);
 
     return toCache;
   }
 
   /** Update a cached Emoji */
-  public patchEmoji(emoji: Emoji, structure: RawEmoji): Emoji {
+  public patchEmoji(emoji: GuildEmoji, structure: RawEmoji): GuildEmoji {
     if (structure.name) emoji.name = structure.name;
-    if (structure.user) emoji.user = this.addUser(structure.user);
+
     if (structure.managed) emoji.managed = structure.managed;
     if (structure.animated) emoji.animated = structure.animated;
     if (structure.available) emoji.available = structure.available;

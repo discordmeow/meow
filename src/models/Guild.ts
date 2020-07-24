@@ -1,6 +1,6 @@
 import { Client } from "../client/Client.ts";
 import { Channel } from "./Channel.ts";
-import { Emoji } from "./Emoji.ts";
+import { GuildEmoji } from "./GuildEmoji.ts";
 import { GuildMember } from "./GuildMember.ts";
 import { Role } from "./Role.ts";
 import { VoiceState } from "./VoiceState.ts";
@@ -44,7 +44,7 @@ export class Guild {
   /** roles in the guild */
   public roles = new Map<string, Role>();
   /** custom guild emojis */
-  public emojis = new Map<string, Emoji>();
+  public emojis = new Map<string, GuildEmoji>();
   /** enabled guild features */
   public features!: GuildFeatures[];
   /** required MFA level for the guild */
