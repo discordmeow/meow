@@ -6,7 +6,7 @@ import {
   isWebSocketCloseEvent,
 } from "../../deps.ts";
 import { GATEWAY_BASE_URL, GATEWAY_VERSION } from "../util/Constants.ts";
-import { EventHandler } from "./EventHandler.ts";
+import { EventHandler } from "./event_handling/EventHandler.ts";
 import { GatewayError } from "../errors/GatewayError.ts";
 import { Guild } from "../models/Guild.ts";
 
@@ -57,12 +57,12 @@ export class WebSocketHandler {
   public heartbeatInterval!: number;
 
   public sequence?: number | null;
-  public sessionID!: number;
+  public sessionID!: string;
   public ackReceived = true;
 
   public resuming = false;
 
-  public initialUnavailableGuilds!: Set<string>;
+  public initialUnavailableGuilds = new Set<string>();
 
   constructor(public client: Client) {}
 
