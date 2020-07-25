@@ -190,6 +190,10 @@ export class CacheManager {
       }
     });
 
+    member.roles.forEach((role) => {
+      if (!structure.roles.includes(role.id)) member.roles.delete(role.id);
+    });
+
     return member;
   }
 }
