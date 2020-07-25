@@ -1,7 +1,7 @@
 import { Client } from "../../client/Client.ts";
 import { Channel } from "../../models/Channel.ts";
 import { WebSocketHandler } from "../WebSocketHandler.ts";
-import { RawChannel, RawChannelPinsUpdate, RawGuild, RawReadyEvent } from "./RawStructures.ts";
+import { RawChannel, RawChannelPinsUpdate, RawGuild, RawReady } from "./RawStructures.ts";
 
 export interface EventData {
   name: string;
@@ -73,7 +73,7 @@ export class EventHandler {
     }
   }
 
-  private handleReady({ session_id, guilds }: RawReadyEvent) {
+  private handleReady({ session_id, guilds }: RawReady) {
     this.ws.sessionID = session_id;
 
     guilds.forEach((guild) => {
