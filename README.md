@@ -1,6 +1,8 @@
 # meow
 
-A lib for interacting with the Discord API, for the [Deno](https://deno.land/) runtime ! 😺
+A library to interact with the Discord API, for the [Deno](https://deno.land/) runtime ! 😺
+
+Made with [TypeScript](https://www.typescriptlang.org/) language !
 
 Work In Progress. Barely works actually (it can connect to the gateway tho). ⚠️
 
