@@ -14,6 +14,7 @@ import {
   RawGuildIntegrationsUpdate,
 
   RawGuildMemberAdd,
+  RawGuildMemberRemove,
   RawReady,
 } from "./RawStructures.ts";
 
@@ -104,6 +105,9 @@ export class EventHandler {
         break;
       case EventTypes.GUILD_MEMBER_ADD:
         this.handleGuildMemberAdd(data);
+        break;
+      case EventTypes.GUILD_MEMBER_REMOVE:
+        this.handleGuildMemberRemove(data);
         break;
     }
   }
@@ -207,9 +211,11 @@ export class EventHandler {
   }
 
   private handleGuildBanAdd(data: RawGuildBan) {
+    const guild: Guild = <Guild> this.client.cache.guilds.get(data.guild_id);
+    guild.members.delete(data.user.id);
     this.client.events.guildBanAdd.post(
       {
-        guild: <Guild> this.client.cache.guilds.get(data.guild_id),
+        guild: guild,
         user: this.client.cache.addUser(data.user),
       },
     );
@@ -247,5 +253,13 @@ export class EventHandler {
     const member: GuildMember = new GuildMember(data, guild, this.client);
     guild.members.set(member.user.id, member);
     this.client.events.guildMemberAdd.post(member);
+  }
+
+  private handleGuildMemberRemove(data: RawGuildMemberRemove) {
+    const guild: Guild = <Guild> this.client.cache.guilds.get(data.guild_id);
+    guild.members.delete(data.user.id);
+    this.client.events.guildMemberRemove.post(
+      { guild: guild, user: this.client.cache.addUser(data.user) },
+    );
   }
 }

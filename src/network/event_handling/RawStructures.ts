@@ -373,3 +373,10 @@ export interface RawGuildMemberAdd {
   /** id of the guild */
   guild_id: string; // ! Extra field, see https://discord.com/developers/docs/topics/gateway#guild-member-add-guild-member-add-extra-fields
 }
+
+export interface RawGuildMemberRemove {
+  /** 	the id of the guild */
+  guild_id: string;
+  /** the user who was removed */
+  user: RawUser;
+}
