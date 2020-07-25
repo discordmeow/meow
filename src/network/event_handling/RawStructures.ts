@@ -318,7 +318,7 @@ export interface RawGuild {
   approximate_presence_count?: number;
 }
 
-export interface RawReadyEvent {
+export interface RawReady {
   /** gateway version */
   v: number;
   user: RawUser;

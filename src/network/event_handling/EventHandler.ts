@@ -85,7 +85,7 @@ export class EventHandler {
     }
   }
 
-  private handleReady({ session_id, guilds }: RawReadyEvent) {
+  private handleReady({ session_id, guilds }: RawReady) {
     this.ws.sessionID = session_id;
 
     guilds.forEach((guild) => {
