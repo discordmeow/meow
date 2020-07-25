@@ -184,6 +184,12 @@ export class CacheManager {
     member.deaf = structure.deaf;
     member.mute = structure.mute;
 
+    structure.roles.forEach((roleID) => {
+      if (!member.roles.has(roleID)) {
+        member.roles.set(roleID, member.guild.roles.get(roleID) as Role);
+      }
+    });
+
     return member;
   }
 }
