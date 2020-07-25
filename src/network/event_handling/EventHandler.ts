@@ -10,7 +10,8 @@ import {
   RawGuildBan,
 
   RawGuildEmojisUpdate,
-  RawReady,
+  RawGuildIntegrationsUpdate,
+  RawReady
 } from "./RawStructures.ts";
 
 export interface EventData {
@@ -94,6 +95,9 @@ export class EventHandler {
         break;
       case EventTypes.GUILD_EMOJIS_UPDATE:
         this.handleGuildEmojisUpdate(data);
+        break;
+      case EventTypes.GUILD_INTEGRATIONS_UPDATE:
+        this.handleGuildIntegrationsUpdate(data);
         break;
     }
   }
@@ -216,9 +220,19 @@ export class EventHandler {
 
   private handleGuildEmojisUpdate(data: RawGuildEmojisUpdate) {
     const guild: Guild = <Guild> this.client.cache.guilds.get(data.guild_id);
-    const emojis: GuildEmoji[] = data.emojis.map<GuildEmoji>((emoji) =>
-      this.client.cache.addEmoji(emoji, guild)
+    this.client.events.guildEmojisUpdate.post(
+      {
+        guild: guild,
+        emojis: data.emojis.map<GuildEmoji>((emoji) =>
+          this.client.cache.addEmoji(emoji, guild)
+        ),
+      },
     );
-    this.client.events.guildEmojisUpdate.post({ guild: guild, emojis: emojis });
+  }
+
+  private handleGuildIntegrationsUpdate(data: RawGuildIntegrationsUpdate) {
+    this.client.events.guildIntegrationsUpdate.post(
+      <Guild> this.client.cache.guilds.get(data.guild_id),
+    );
   }
 }

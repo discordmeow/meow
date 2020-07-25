@@ -355,3 +355,8 @@ export interface RawGuildEmojisUpdate {
   /** array of emojis */
   emojis: RawEmoji[];
 }
+
+export interface RawGuildIntegrationsUpdate {
+  /** id of the guild whose integrations were updated */
+  guild_id: string;
+}

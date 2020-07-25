@@ -30,6 +30,7 @@ export class ClientEvents {
   public readonly guildEmojisUpdate = new Evt<
     { guild: Guild; emojis: GuildEmoji[] }
   >();
+  public readonly guildIntegrationsUpdate = new Evt<Guild>();
 
   /** Emitted when a Channel is created. */
   public readonly channelCreate = new Evt<Channel>();
