@@ -245,7 +245,7 @@ export type RawGuildFeatures =
   | "NEWS"
   | "DISCOVERABLE"
   | "FEATURABLE"
-  | "ANIMTATED_ICON"
+  | "ANIMATED_ICON"
   | "BANNER"
   | "PUBLIC_DISABLED"
   | "WELCOME_SCREEN_ENABLED";
