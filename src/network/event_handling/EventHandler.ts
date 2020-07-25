@@ -1,5 +1,6 @@
 import { Client } from "../../client/Client.ts";
 import { Channel } from "../../models/Channel.ts";
+import { Guild } from '../../models/Guild.ts';
 import { WebSocketHandler } from "../WebSocketHandler.ts";
 import { RawChannel, RawChannelPinsUpdate, RawGuild, RawReady } from "./RawStructures.ts";
 
@@ -69,6 +70,9 @@ export class EventHandler {
         break;
       case EventTypes.CHANNEL_PINS_UPDATE:
         this.handleChannelPinsUpdate(data);
+        break;
+      case EventTypes.GUILD_UPDATE:
+        this.handleGuildUpdate(data);
         break;
     }
   }
@@ -141,5 +145,10 @@ export class EventHandler {
     if (this.ws.initialUnavailableGuilds.has(data.id)) {
       this.ws.initialUnavailableGuilds.delete(data.id);
     }
+  }
+
+  private handleGuildUpdate(data: RawGuild) {
+    const guild: Guild = this.client.cache.addGuild(data);
+    this.client.events.guildUpdate.post(guild);
   }
 }

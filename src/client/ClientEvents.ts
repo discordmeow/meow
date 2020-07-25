@@ -12,6 +12,7 @@ export class ClientEvents {
   public readonly guildCreate = new Evt<Guild>();
   public readonly guildAvailable = new Evt<Guild>();
   public readonly guildUnavailable = new Evt<Guild>();
+  public readonly guildUpdate = new Evt<Guild>();
   
   public readonly channelCreate = new Evt<Channel>();
   public readonly channelUpdate = new Evt<Channel>();
