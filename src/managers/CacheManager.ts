@@ -57,7 +57,9 @@ export class CacheManager {
 
   /** Cache an Emoji */
   public addEmoji(structure: RawEmoji, guild: Guild): GuildEmoji {
-    const cached: GuildEmoji | undefined = this.emojis.get(structure.id as string);
+    const cached: GuildEmoji | undefined = this.emojis.get(
+      structure.id as string,
+    );
     if (cached) return this.patchEmoji(cached, structure);
 
     const toCache: GuildEmoji = new GuildEmoji(structure, guild, this.client);
@@ -143,7 +145,10 @@ export class CacheManager {
     });
 
     ((structure.members) as RawGuildMember[]).map((member): void => {
-      guild.members.set(((member.user) as RawUser).id, new GuildMember(member, guild, this.client));
+      guild.members.set(
+        ((member.user) as RawUser).id,
+        new GuildMember(member, guild, this.client),
+      );
     });
 
     ((structure.channels) as RawChannel[]).map((channel): void => {
@@ -168,5 +173,27 @@ export class CacheManager {
     // todo(): patcher for Channel
 
     return channel;
+  }
+
+  public patchMember(
+    member: GuildMember,
+    structure: RawGuildMember,
+  ): GuildMember {
+    if (structure.premium_since) member.premiumSince = structure.premium_since;
+    member.nick = structure.nick;
+    member.deaf = structure.deaf;
+    member.mute = structure.mute;
+
+    structure.roles.forEach((roleID) => {
+      if (!member.roles.has(roleID)) {
+        member.roles.set(roleID, member.guild.roles.get(roleID) as Role);
+      }
+    });
+
+    member.roles.forEach((role) => {
+      if (!structure.roles.includes(role.id)) member.roles.delete(role.id);
+    });
+
+    return member;
   }
 }
