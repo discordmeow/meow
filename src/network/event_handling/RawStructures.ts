@@ -393,3 +393,21 @@ export interface RawGuildMemberUpdate {
   /** when the user starting boosting the guild */
   premium_since?: number;
 }
+
+export interface RawGuildMembersChunk {
+  /** the id of the guild */
+  guild_id: string;
+  /** set of guild members */
+  members: RawGuildMember[];
+  /** the chunk index in the expected chunks for this response *(0 <= chunk_index < chunk_count)* */
+  chunk_index: number;
+  /** the total number of expected chunks for this response */
+  chunk_count: number;
+  /** if passing an invalid id to `REQUEST_GUILD_MEMBERS`, it will be returned here */
+  not_found?: string[];
+  /** if passing true to `REQUEST_GUILD_MEMBERS`, presences of the returned members will be here */
+  presences?: null[];
+  // todo("models" branch): Presence model
+  /** the nonce used in the Guild Members Request */
+  nonce?: string;
+}

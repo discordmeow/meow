@@ -39,6 +39,19 @@ export class ClientEvents {
   public readonly guildMemberRemove = new Evt<{ guild: Guild; user: User }>();
   /** Emitted when a GuildMember is updated. Also fired when the <GuildMember>.user object changes */
   public readonly guildMemberUpdate = new Evt<GuildMember>();
+  /** Emitted as response to a Guild Request Members */
+  public readonly guildMembersChunk = new Evt<
+    {
+      guild: Guild;
+      members: GuildMember[];
+      chunkIndex: number;
+      chunkCount: number;
+      notFound?: string[];
+      presences?: null[];
+      nonce?: string;
+    }
+  >();
+  // todo("models" branch): Presence model
 
   /** Emitted when a Channel is created. */
   public readonly channelCreate = new Evt<Channel>();

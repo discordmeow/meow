@@ -16,8 +16,9 @@ import {
 
   RawGuildMemberAdd,
   RawGuildMemberRemove,
+  RawGuildMembersChunk,
   RawGuildMemberUpdate,
-  RawReady
+  RawReady,
 } from "./RawStructures.ts";
 
 export interface EventData {
@@ -113,6 +114,9 @@ export class EventHandler {
         break;
       case EventTypes.GUILD_MEMBER_UPDATE:
         this.handleGuildMemberUpdate(data);
+        break;
+      case EventTypes.GUILD_MEMBERS_CHUNK:
+        this.handleGuildMembersChunk(data);
         break;
     }
   }
@@ -285,5 +289,29 @@ export class EventHandler {
       member,
     );
     this.client.events.guildMemberUpdate.post(member);
+  }
+
+  private handleGuildMembersChunk(data: RawGuildMembersChunk) {
+    // todo("models" branch): Presence model
+    const guild: Guild = <Guild> this.client.cache.guilds.get(data.guild_id);
+    const members: GuildMember[] = data.members.map<GuildMember>((member) => {
+      const m: GuildMember = this.client.cache.patchMember(
+        <GuildMember> guild.members.get(<string> member.user?.id),
+        member,
+      );
+      guild.members.set(m.user.id, m);
+      return m;
+    });
+    this.client.events.guildMembersChunk.post(
+      {
+        guild: guild,
+        members: members,
+        chunkIndex: data.chunk_index,
+        chunkCount: data.chunk_count,
+        notFound: data.not_found,
+        presences: [null],
+        nonce: data.nonce,
+      },
+    );
   }
 }
