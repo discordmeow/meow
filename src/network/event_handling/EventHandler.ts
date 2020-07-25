@@ -1,8 +1,13 @@
 import { Client } from "../../client/Client.ts";
 import { Channel } from "../../models/Channel.ts";
-import { Guild } from '../../models/Guild.ts';
+import { Guild } from "../../models/Guild.ts";
 import { WebSocketHandler } from "../WebSocketHandler.ts";
-import { RawChannel, RawChannelPinsUpdate, RawGuild, RawReady } from "./RawStructures.ts";
+import {
+  RawChannel,
+  RawChannelPinsUpdate,
+  RawGuild,
+  RawReadyEvent
+} from "./RawStructures.ts";
 
 export interface EventData {
   name: string;
@@ -74,6 +79,9 @@ export class EventHandler {
       case EventTypes.GUILD_UPDATE:
         this.handleGuildUpdate(data);
         break;
+      case EventTypes.GUILD_DELETE:
+        this.handleGuildDelete(data);
+        break;
     }
   }
 
@@ -116,8 +124,12 @@ export class EventHandler {
   }
 
   private handleChannelPinsUpdate(data: RawChannelPinsUpdate) {
-    const channel: Channel | undefined = this.client.cache.channels.get(data.channel_id);
-    if (channel && data.last_pin_timestamp) channel.lastPinTimestamp = data.last_pin_timestamp;
+    const channel: Channel | undefined = this.client.cache.channels.get(
+      data.channel_id,
+    );
+    if (channel && data.last_pin_timestamp) {
+      channel.lastPinTimestamp = data.last_pin_timestamp;
+    }
     this.client.events.channelPinsUpdate.post(data);
   }
 
@@ -150,5 +162,18 @@ export class EventHandler {
   private handleGuildUpdate(data: RawGuild) {
     const guild: Guild = this.client.cache.addGuild(data);
     this.client.events.guildUpdate.post(guild);
+  }
+
+  private handleGuildDelete(
+    data: { id: string; unavailable?: boolean | null },
+  ) {
+    const guild: Guild = <Guild>this.client.cache.guilds.get(data.id);
+    if (data.unavailable) {
+      this.client.cache.unavailableGuilds.add(data.id);
+      this.client.events.guildUnavailable.post(guild);
+    } else {
+      this.client.cache.guilds.delete(data.id);
+      this.client.events.guildDelete.post(guild);
+    }
   }
 }

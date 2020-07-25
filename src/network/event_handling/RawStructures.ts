@@ -230,7 +230,7 @@ export enum RawPremiumTier {
 export enum RawSystemChannelFlags {
   /** Suppress member join notifications */
   SUPPRESS_JOIN_NOTIFICATIONS = 1 << 0,
-  /** Supress server boost notifications */
+  /** Suppress server boost notifications */
   SUPPRESS_PREMIUM_SUBSCRIPTIONS = 1 << 1,
 }
 
@@ -245,7 +245,7 @@ export type RawGuildFeatures =
   | "NEWS"
   | "DISCOVERABLE"
   | "FEATURABLE"
-  | "ANIMTATED_ICON"
+  | "ANIMATED_ICON"
   | "BANNER"
   | "PUBLIC_DISABLED"
   | "WELCOME_SCREEN_ENABLED";
