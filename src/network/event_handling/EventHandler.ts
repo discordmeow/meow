@@ -2,6 +2,7 @@ import { Client } from "../../client/Client.ts";
 import { Channel } from "../../models/Channel.ts";
 import { Guild } from "../../models/Guild.ts";
 import { GuildEmoji } from "../../models/GuildEmoji.ts";
+import { GuildMember } from "../../models/GuildMember.ts";
 import { WebSocketHandler } from "../WebSocketHandler.ts";
 import {
   RawChannel,
@@ -11,7 +12,9 @@ import {
 
   RawGuildEmojisUpdate,
   RawGuildIntegrationsUpdate,
-  RawReady
+
+  RawGuildMemberAdd,
+  RawReady,
 } from "./RawStructures.ts";
 
 export interface EventData {
@@ -98,6 +101,9 @@ export class EventHandler {
         break;
       case EventTypes.GUILD_INTEGRATIONS_UPDATE:
         this.handleGuildIntegrationsUpdate(data);
+        break;
+      case EventTypes.GUILD_MEMBER_ADD:
+        this.handleGuildMemberAdd(data);
         break;
     }
   }
@@ -234,5 +240,12 @@ export class EventHandler {
     this.client.events.guildIntegrationsUpdate.post(
       <Guild> this.client.cache.guilds.get(data.guild_id),
     );
+  }
+
+  private handleGuildMemberAdd(data: RawGuildMemberAdd) {
+    const guild: Guild = <Guild> this.client.cache.guilds.get(data.guild_id);
+    const member: GuildMember = new GuildMember(data, guild, this.client);
+    guild.members.set(member.user.id, member);
+    this.client.events.guildMemberAdd.post(member);
   }
 }

@@ -3,6 +3,7 @@ import { GatewayError } from "../errors/GatewayError.ts";
 import { Channel } from "../models/Channel.ts";
 import { Guild } from "../models/Guild.ts";
 import { GuildEmoji } from "../models/GuildEmoji.ts";
+import { GuildMember } from "../models/GuildMember.ts";
 import { User } from "../models/User.ts";
 
 export class ClientEvents {
@@ -30,7 +31,10 @@ export class ClientEvents {
   public readonly guildEmojisUpdate = new Evt<
     { guild: Guild; emojis: GuildEmoji[] }
   >();
+  /** Emitted when a Guild integration is updated */
   public readonly guildIntegrationsUpdate = new Evt<Guild>();
+  /** Emitted when a new User join a Guild */
+  public readonly guildMemberAdd = new Evt<GuildMember>();
 
   /** Emitted when a Channel is created. */
   public readonly channelCreate = new Evt<Channel>();

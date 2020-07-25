@@ -360,3 +360,16 @@ export interface RawGuildIntegrationsUpdate {
   /** id of the guild whose integrations were updated */
   guild_id: string;
 }
+
+export interface RawGuildMemberAdd {
+  /** The field user won't be included in the member object attached to MESSAGE_CREATE and MESSAGE_UPDATE gateway events. */
+  user?: RawUser;
+  nick?: string;
+  roles: RawRole["id"][];
+  joined_at: number;
+  premium_since?: number;
+  deaf: boolean;
+  mute: boolean;
+  /** id of the guild */
+  guild_id: string; // ! Extra field, see https://discord.com/developers/docs/topics/gateway#guild-member-add-guild-member-add-extra-fields
+}
