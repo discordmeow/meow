@@ -15,12 +15,12 @@ export class ClientEvents {
   public readonly guildCreate = new Evt<Guild>();
   /** Emitted when a Guild become available. Send the Guild */
   public readonly guildAvailable = new Evt<Guild>();
-  /** Emitted when a Guild become unavailable. Send the Guild ID */
-  public readonly guildUnavailable = new Evt<string>();
+  /** Emitted when a Guild become unavailable. Send the Guild */
+  public readonly guildUnavailable = new Evt<Guild>();
   /** Emitted when a Guild is updated. Send the Guild */
   public readonly guildUpdate = new Evt<Guild>();
-  /** Emitted when the client leave a Guild. Send the Guild ID */
-  public readonly guildDelete = new Evt<string>();
+  /** Emitted when the client leave a Guild. Send the Guild */
+  public readonly guildDelete = new Evt<Guild>();
 
   /** Emitted when a Channel is created. Send the Channel */
   public readonly channelCreate = new Evt<Channel>();

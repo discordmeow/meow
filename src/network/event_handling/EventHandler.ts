@@ -167,12 +167,13 @@ export class EventHandler {
   private handleGuildDelete(
     data: { id: string; unavailable?: boolean | null },
   ) {
+    const guild: Guild = <Guild>this.client.cache.guilds.get(data.id);
     if (data.unavailable) {
       this.client.cache.unavailableGuilds.add(data.id);
-      this.client.events.guildUnavailable.post(data.id);
+      this.client.events.guildUnavailable.post(guild);
     } else {
       this.client.cache.guilds.delete(data.id);
-      this.client.events.guildDelete.post(data.id);
+      this.client.events.guildDelete.post(guild);
     }
   }
 }
