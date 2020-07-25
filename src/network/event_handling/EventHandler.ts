@@ -1,12 +1,16 @@
 import { Client } from "../../client/Client.ts";
 import { Channel } from "../../models/Channel.ts";
 import { Guild } from "../../models/Guild.ts";
+import { GuildEmoji } from "../../models/GuildEmoji.ts";
 import { WebSocketHandler } from "../WebSocketHandler.ts";
 import {
   RawChannel,
   RawChannelPinsUpdate,
   RawGuild,
-  RawReady
+  RawGuildBan,
+
+  RawGuildEmojisUpdate,
+  RawReady,
 } from "./RawStructures.ts";
 
 export interface EventData {
@@ -82,6 +86,15 @@ export class EventHandler {
       case EventTypes.GUILD_DELETE:
         this.handleGuildDelete(data);
         break;
+      case EventTypes.GUILD_BAN_ADD:
+        this.handleGuildBanAdd(data);
+        break;
+      case EventTypes.GUILD_BAN_REMOVE:
+        this.handleGuildBanRemove(data);
+        break;
+      case EventTypes.GUILD_EMOJIS_UPDATE:
+        this.handleGuildEmojisUpdate(data);
+        break;
     }
   }
 
@@ -130,7 +143,13 @@ export class EventHandler {
     if (channel && data.last_pin_timestamp) {
       channel.lastPinTimestamp = data.last_pin_timestamp;
     }
-    this.client.events.channelPinsUpdate.post(data);
+    this.client.events.channelPinsUpdate.post(
+      {
+        channel: channel,
+        guild: this.client.cache.guilds.get(data.guild_id ?? ""),
+        lastPinTimestamp: data.last_pin_timestamp,
+      },
+    );
   }
 
   private handleGuildCreate(data: RawGuild) {
@@ -167,7 +186,7 @@ export class EventHandler {
   private handleGuildDelete(
     data: { id: string; unavailable?: boolean | null },
   ) {
-    const guild: Guild = <Guild>this.client.cache.guilds.get(data.id);
+    const guild: Guild = <Guild> this.client.cache.guilds.get(data.id);
     if (data.unavailable) {
       this.client.cache.unavailableGuilds.add(data.id);
       this.client.events.guildUnavailable.post(guild);
@@ -175,5 +194,31 @@ export class EventHandler {
       this.client.cache.guilds.delete(data.id);
       this.client.events.guildDelete.post(guild);
     }
+  }
+
+  private handleGuildBanAdd(data: RawGuildBan) {
+    this.client.events.guildBanAdd.post(
+      {
+        guild: <Guild> this.client.cache.guilds.get(data.guild_id),
+        user: this.client.cache.addUser(data.user),
+      },
+    );
+  }
+
+  private handleGuildBanRemove(data: RawGuildBan) {
+    this.client.events.guildBanRemove.post(
+      {
+        guild: <Guild> this.client.cache.guilds.get(data.guild_id),
+        user: this.client.cache.addUser(data.user),
+      },
+    );
+  }
+
+  private handleGuildEmojisUpdate(data: RawGuildEmojisUpdate) {
+    const guild: Guild = <Guild> this.client.cache.guilds.get(data.guild_id);
+    const emojis: GuildEmoji[] = data.emojis.map<GuildEmoji>((emoji) =>
+      this.client.cache.addEmoji(emoji, guild)
+    );
+    this.client.events.guildEmojisUpdate.post({ guild: guild, emojis: emojis });
   }
 }

@@ -340,3 +340,18 @@ export interface RawChannelPinsUpdate {
   /** the time at which the most recent pinned message was pinned */
   last_pin_timestamp?: number;
 }
+
+// ! Used for Guild Ban Add and Guild Ban Remove
+export interface RawGuildBan {
+  /** id of the guild */
+  guild_id: string;
+  /** the unbanned user */
+  user: RawUser;
+}
+
+export interface RawGuildEmojisUpdate {
+  /** id of the guild */
+  guild_id: string;
+  /** array of emojis */
+  emojis: RawEmoji[];
+}
