@@ -3,6 +3,7 @@ import { Channel } from "../../models/Channel.ts";
 import { Guild } from "../../models/Guild.ts";
 import { GuildEmoji } from "../../models/GuildEmoji.ts";
 import { GuildMember } from "../../models/GuildMember.ts";
+import { Role } from "../../models/Role.ts";
 import { WebSocketHandler } from "../WebSocketHandler.ts";
 import {
   RawChannel,
@@ -15,7 +16,8 @@ import {
 
   RawGuildMemberAdd,
   RawGuildMemberRemove,
-  RawReady,
+  RawGuildMemberUpdate,
+  RawReady
 } from "./RawStructures.ts";
 
 export interface EventData {
@@ -108,6 +110,9 @@ export class EventHandler {
         break;
       case EventTypes.GUILD_MEMBER_REMOVE:
         this.handleGuildMemberRemove(data);
+        break;
+      case EventTypes.GUILD_MEMBER_UPDATE:
+        this.handleGuildMemberUpdate(data);
         break;
     }
   }
@@ -261,5 +266,24 @@ export class EventHandler {
     this.client.events.guildMemberRemove.post(
       { guild: guild, user: this.client.cache.addUser(data.user) },
     );
+  }
+
+  private handleGuildMemberUpdate(data: RawGuildMemberUpdate) {
+    const member: GuildMember =
+      <GuildMember> (<Guild> this.client.cache.guilds.get(data.guild_id))
+        .members.get(data.user.id);
+    if (data.nick) member.nick = data.nick;
+    if (data.premium_since) member.premiumSince = data.premium_since;
+    member.user = this.client.cache.patchUser(member.user, data.user);
+    data.roles.forEach((roleID) => {
+      if (!member.roles.has(roleID)) {
+        member.roles.set(roleID, <Role> member.guild.roles.get(roleID));
+      }
+    });
+    this.client.cache.guilds.get(data.guild_id)?.members.set(
+      member.user.id,
+      member,
+    );
+    this.client.events.guildMemberUpdate.post(member);
   }
 }

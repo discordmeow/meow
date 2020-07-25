@@ -35,8 +35,10 @@ export class ClientEvents {
   public readonly guildIntegrationsUpdate = new Evt<Guild>();
   /** Emitted when a new User join a Guild */
   public readonly guildMemberAdd = new Evt<GuildMember>();
-  /** Emitted when a User leave a Guild */
+  /** Emitted when a User leave/is kicked from/is banned from a Guild */
   public readonly guildMemberRemove = new Evt<{ guild: Guild; user: User }>();
+  /** Emitted when a GuildMember is updated. Also fired when the <GuildMember>.user object changes */
+  public readonly guildMemberUpdate = new Evt<GuildMember>();
 
   /** Emitted when a Channel is created. */
   public readonly channelCreate = new Evt<Channel>();

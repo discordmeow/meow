@@ -380,3 +380,16 @@ export interface RawGuildMemberRemove {
   /** the user who was removed */
   user: RawUser;
 }
+
+export interface RawGuildMemberUpdate {
+  /** the id of the guild */
+  guild_id: string;
+  /** user role ids */
+  roles: RawRole["id"][];
+  /** user role ids */
+  user: RawUser;
+  /** nickname of the user in the guild */
+  nick?: string;
+  /** when the user starting boosting the guild */
+  premium_since?: number;
+}
