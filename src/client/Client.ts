@@ -2,6 +2,7 @@ import { CacheManager } from '../managers/CacheManager.ts';
 import { UserManager } from "../managers/UserManager.ts";
 import { WebSocketHandler } from "../network/WebSocketHandler.ts";
 import { ClientEvents } from "./ClientEvents.ts";
+import { RequestHandler } from '../network/rest/RequestHandler.ts';
 
 export interface ClientOptions {
   token: string;
@@ -12,6 +13,7 @@ export class Client {
   public readonly users = new UserManager(this);
   public readonly ws = new WebSocketHandler(this);
   public readonly events = new ClientEvents();
+  public readonly http = new RequestHandler(this);
   public cache = new CacheManager(this);
 
   constructor(public options: ClientOptions) {
