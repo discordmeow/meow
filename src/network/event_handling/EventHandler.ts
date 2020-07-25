@@ -1,7 +1,7 @@
 import { Client } from "../../client/Client.ts";
 import { Channel } from "../../models/Channel.ts";
 import { WebSocketHandler } from "../WebSocketHandler.ts";
-import { RawChannel, RawGuild, RawReadyEvent } from "./RawStructures.ts";
+import { RawChannel, RawChannelPinsUpdate, RawGuild, RawReadyEvent } from "./RawStructures.ts";
 
 export interface EventData {
   name: string;
@@ -67,6 +67,9 @@ export class EventHandler {
       case EventTypes.CHANNEL_DELETE:
         this.handleChannelDelete(data);
         break;
+      case EventTypes.CHANNEL_PINS_UPDATE:
+        this.handleChannelPinsUpdate(data);
+        break;
     }
   }
 
@@ -106,6 +109,12 @@ export class EventHandler {
 
     this.client.cache.channels.delete(channel.id);
     this.client.events.channelDelete.post(channel);
+  }
+
+  private handleChannelPinsUpdate(data: RawChannelPinsUpdate) {
+    const channel: Channel | undefined = this.client.cache.channels.get(data.channel_id);
+    if (channel && data.last_pin_timestamp) channel.lastPinTimestamp = data.last_pin_timestamp;
+    this.client.events.channelPinsUpdate.post(data);
   }
 
   private handleGuildCreate(data: RawGuild) {

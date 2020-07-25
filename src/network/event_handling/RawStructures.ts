@@ -331,3 +331,12 @@ export interface RawReadyEvent {
   /** the shard information associated with this session, if sent when identifying */
   shard?: [number, number];
 }
+
+export interface RawChannelPinsUpdate {
+  /** the id of the guild */
+  guild_id?: string;
+  /** the id of the channel */
+  channel_id: string;
+  /** the time at which the most recent pinned message was pinned */
+  last_pin_timestamp?: number;
+}
