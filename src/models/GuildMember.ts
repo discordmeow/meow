@@ -2,6 +2,7 @@ import { Client } from "../client/Client.ts";
 import { Guild } from "./Guild.ts";
 import { User } from "./User.ts";
 import { RawGuildMember } from "../network/event_handling/RawStructures.ts";
+import { Role } from "./Role.ts";
 
 export class GuildMember {
   /** the user this guild member represents */
@@ -9,7 +10,7 @@ export class GuildMember {
   /** this users guild nickname */
   public nick?: string;
   /** roles id of this guild member */
-  public roles!: string[];
+  public roles = new Map<string, Role>();
   /** when the user joined the guild */
   public joinedAt: number;
   /** when the user started boosting the guild */
