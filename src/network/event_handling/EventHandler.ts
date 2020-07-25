@@ -6,7 +6,7 @@ import {
   RawChannel,
   RawChannelPinsUpdate,
   RawGuild,
-  RawReadyEvent
+  RawReady
 } from "./RawStructures.ts";
 
 export interface EventData {
