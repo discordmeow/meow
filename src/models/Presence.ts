@@ -1,5 +1,5 @@
 import {
-  RawPresenceUpdateEvent,
+  RawPresenceUpdate,
   RawActivityStatus,
   RawClientStatus,
 } from "../network/event_handling/RawStructures.ts";
@@ -32,7 +32,7 @@ export class Presence {
   public nick?: string | null;
 
   constructor(
-    structure: RawPresenceUpdateEvent,
+    structure: RawPresenceUpdate,
     public guild: Guild,
     public client: Client,
   ) {

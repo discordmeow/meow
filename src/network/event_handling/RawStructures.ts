@@ -296,7 +296,7 @@ export interface RawGuild {
   voice_states?: RawVoiceState[];
   members?: RawGuildMember[];
   channels?: RawChannel[];
-  presences?: RawPresenceUpdateEvent[];
+  presences?: RawPresenceUpdate[];
   max_presences?: number;
   max_members?: number;
   vanity_url_code?: string;
@@ -312,7 +312,7 @@ export interface RawGuild {
   approximate_presence_count?: number;
 }
 
-export interface RawPresenceUpdateEvent {
+export interface RawPresenceUpdate {
   user: RawUser;
   roles: RawRole["id"][];
   game?: RawActivity;
