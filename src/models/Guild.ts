@@ -7,9 +7,12 @@ import { VoiceState } from "./VoiceState.ts";
 import {
   RawGuildFeatures,
   RawGuild,
+  RawMFALevel,
 } from "../network/event_handling/RawStructures.ts";
+import { Presence } from "./Presence.ts";
 
 export type GuildFeatures = RawGuildFeatures;
+export type MFALevel = RawMFALevel;
 
 export class Guild {
   /** guild id */
@@ -48,7 +51,7 @@ export class Guild {
   /** enabled guild features */
   public features!: GuildFeatures[];
   /** required MFA level for the guild */
-  public mfaLevel!: number;
+  public mfaLevel!: MFALevel;
   /** application id of the guild creator if it is bot-created */
   public applicationID?: string;
   /** true if the server widget is enabled */
@@ -75,6 +78,8 @@ export class Guild {
   public members = new Map<string, GuildMember>();
   /** channels in the guild */
   public channels = new Map<string, Channel>();
+  /** presences of the members in the guild, will only include non-offline members if the size is greater than large threshold */
+  public presences = new Map<string, Presence>();
 
   constructor(structure: RawGuild, public client: Client) {
     this.id = structure.id;
