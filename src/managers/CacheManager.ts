@@ -12,9 +12,11 @@ import {
   RawChannel,
   RawVoiceState,
   RawGuildMember,
+  RawPresenceUpdateEvent,
 } from "../network/event_handling/RawStructures.ts";
 import { GuildMember } from "../models/GuildMember.ts";
 import { VoiceState } from "../models/VoiceState.ts";
+import { Presence } from "../models/Presence.ts";
 
 export class CacheManager {
   /** Map containing every cached users */
@@ -196,4 +198,9 @@ export class CacheManager {
 
     return member;
   }
+
+  public patchPresence(presence: Presence, structure: RawPresenceUpdateEvent) {
+    // Todo(Cat66000)
+  }
 }
+
