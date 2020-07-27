@@ -105,22 +105,16 @@ export interface RawOverwrite {
   deny: number;
 }
 
-export interface RawPresenceUpdate {
-  user: RawUser;
-  roles: RawRole["id"][];
-  game?: RawActivity;
-  guild_id: string;
-  status: RawActivityStatus;
-  activities: RawActivity[];
-  client_status: RawClientStatus;
-  premium_since?: number;
-  nick?: string;
-}
-
 export interface RawClientStatus {
   desktop?: string;
   mobile?: string;
   web?: string;
+}
+
+export interface RawActivityEmoji {
+  name: string;
+  id?: string;
+  animated?: boolean;
 }
 
 export interface RawActivity {
@@ -132,7 +126,7 @@ export interface RawActivity {
   application_id?: string;
   details?: string;
   state?: string;
-  emoji?: RawEmoji;
+  emoji?: RawActivityEmoji;
   party?: RawActivityParty;
   assets?: RawActivityAssets;
   secrets?: RawActivitySecrets;
@@ -302,7 +296,7 @@ export interface RawGuild {
   voice_states?: RawVoiceState[];
   members?: RawGuildMember[];
   channels?: RawChannel[];
-  presences?: RawPresenceUpdate[];
+  presences?: RawPresenceUpdateEvent[];
   max_presences?: number;
   max_members?: number;
   vanity_url_code?: string;
@@ -316,6 +310,18 @@ export interface RawGuild {
   max_video_channel_users?: number;
   approximate_member_count?: number;
   approximate_presence_count?: number;
+}
+
+export interface RawPresenceUpdateEvent {
+  user: RawUser;
+  roles: RawRole["id"][];
+  game?: RawActivity;
+  guild_id: string;
+  status: RawActivityStatus;
+  activities: RawActivity[];
+  client_status: RawClientStatus;
+  premium_since?: number;
+  nick?: string;
 }
 
 export interface RawReady {
