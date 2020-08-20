@@ -20,7 +20,7 @@ import { VoiceState } from "../models/VoiceState.ts";
 import { Presence } from "../models/Presence.ts";
 import { Activity } from "../models/Activity.ts";
 
-export class CacheManager {
+export class Cache {
   /** Map containing every cached users */
   public users: Map<string, User> = new Map();
   /** Map containing every cached guilds */
