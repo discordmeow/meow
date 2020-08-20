@@ -13,10 +13,12 @@ import {
   RawVoiceState,
   RawGuildMember,
   RawPresenceUpdate,
+  RawActivity,
 } from "../network/event_handling/RawStructures.ts";
 import { GuildMember } from "../models/GuildMember.ts";
 import { VoiceState } from "../models/VoiceState.ts";
 import { Presence } from "../models/Presence.ts";
+import { Activity } from "../models/Activity.ts";
 
 export class CacheManager {
   /** Map containing every cached users */
@@ -199,8 +201,21 @@ export class CacheManager {
     return member;
   }
 
+  public patchActivity(activity: Activity, structure: RawActivity) {
+    if (activity.name !== structure.name) activity.name = structure.name;
+    if (activity.type !== structure.type) activity.type = structure.type;
+    activity.url = structure.url || undefined;
+    if (activity.createdAt !== structure.created_at) {
+      activity.createdAt = structure.created_at;
+    }
+    if (structure.timestamps) {
+      activity.timestamps = structure.timestamps;
+    }
+  }
+
   public patchPresence(presence: Presence, structure: RawPresenceUpdate) {
     // Todo(Cat66000)
+
+    presence.roles = structure.roles;
   }
 }
-

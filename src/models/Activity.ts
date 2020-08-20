@@ -22,7 +22,7 @@ export class Activity {
   /** activity type */
   public type!: ActivityTypes;
   /** stream url, is validated when type is 1 */
-  public url?: string | null;
+  public url?: string;
   /** unix timestamp of when the activity was added to the user's session */
   public createdAt!: number;
   /** unix timestamps for start and/or end of the game */
@@ -30,11 +30,11 @@ export class Activity {
   /** application id for the game */
   public applicationID?: string;
   /** what the player is currently doing */
-  public details?: string | null;
+  public details?: string;
   /** the user's current party status */
-  public state?: string | null;
+  public state?: string;
   /** the emoji used for a custom status */
-  public emoji?: GuildEmoji | null;
+  public emoji?: GuildEmoji;
   /** information for the current party of the player */
   public party?: ActivityParty;
   /** images for the presence and their hover texts */
@@ -46,5 +46,7 @@ export class Activity {
   /** activity flags */
   public flags?: ActivityFlags;
 
-  constructor(structure: RawActivity, public client: Client) {}
+  constructor(structure: RawActivity, public client: Client) {
+    client.cache.patchActivity(this, structure);
+  }
 }
