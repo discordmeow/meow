@@ -6,7 +6,7 @@ import {
   RawChannel,
   RawChannelPinsUpdate,
   RawGuild,
-  RawReady
+  RawReady,
 } from "./RawStructures.ts";
 
 export interface EventData {
@@ -167,7 +167,7 @@ export class EventHandler {
   private handleGuildDelete(
     data: { id: string; unavailable?: boolean | null },
   ) {
-    const guild: Guild = <Guild>this.client.cache.guilds.get(data.id);
+    const guild: Guild = <Guild> this.client.cache.guilds.get(data.id);
     if (data.unavailable) {
       this.client.cache.unavailableGuilds.add(data.id);
       this.client.events.guildUnavailable.post(guild);

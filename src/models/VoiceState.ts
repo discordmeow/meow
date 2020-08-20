@@ -1,6 +1,6 @@
-import { Client } from '../client/Client.ts';
-import { Guild } from './Guild.ts';
-import { GuildMember } from './GuildMember.ts';
+import { Client } from "../client/Client.ts";
+import { Guild } from "./Guild.ts";
+import { GuildMember } from "./GuildMember.ts";
 
 export class VoiceState {
   /** the guild id this voice state is for */
@@ -32,7 +32,9 @@ export class VoiceState {
     this.guildID = structure.guild_id || guild.id;
     this.channelID = structure.channel_id;
     this.userID = structure.user_id;
-    if (structure.member) this.member = guild.members.get(structure.member.user.id) ?? null;
+    if (structure.member) {
+      this.member = guild.members.get(structure.member.user.id) ?? null;
+    }
     this.sessionID = structure.session_id;
     this.deaf = structure.deaf;
     this.mute = structure.mute;
