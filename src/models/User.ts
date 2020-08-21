@@ -1,4 +1,5 @@
 import { Client } from "../client/Client.ts";
+import { RawUser } from "../util/RawStructures.ts";
 
 export class User {
   /** The user's ID */
@@ -22,7 +23,7 @@ export class User {
   /** The public flags on a user's account */
   public publicFlags?: number;
 
-  constructor(structure: any, public client: Client) {
+  constructor(structure: RawUser, public client: Client) {
     this.id = structure.id;
 
     client.cache.patchUser(this, structure);
