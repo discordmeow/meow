@@ -8,7 +8,7 @@ import {
   RawGuildFeatures,
   RawGuild,
   RawMFALevel,
-} from "../network/event_handling/RawStructures.ts";
+} from "../util/RawStructures.ts";
 import { Presence } from "./Presence.ts";
 
 export type GuildFeatures = RawGuildFeatures;

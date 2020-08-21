@@ -6,9 +6,8 @@ import {
   isWebSocketCloseEvent,
 } from "../../deps.ts";
 import { GATEWAY_BASE_URL, GATEWAY_VERSION } from "../util/Constants.ts";
-import { EventHandler } from "./event_handling/EventHandler.ts";
+import { EventHandler } from "./EventHandler.ts";
 import { GatewayError } from "../errors/GatewayError.ts";
-import { Guild } from "../models/Guild.ts";
 
 const { stringify, parse } = JSON;
 

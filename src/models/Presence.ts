@@ -2,7 +2,7 @@ import {
   RawPresenceUpdate,
   RawActivityStatus,
   RawClientStatus,
-} from "../network/event_handling/RawStructures.ts";
+} from "../util/RawStructures.ts";
 import { Guild } from "./Guild.ts";
 import { Client } from "../client/Client.ts";
 import { User } from "./User.ts";

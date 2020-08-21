@@ -14,7 +14,7 @@ import {
   RawGuildMember,
   RawPresenceUpdate,
   RawActivity,
-} from "../network/event_handling/RawStructures.ts";
+} from "../util/RawStructures.ts";
 import { GuildMember } from "../models/GuildMember.ts";
 import { VoiceState } from "../models/VoiceState.ts";
 import { Presence } from "../models/Presence.ts";
@@ -84,7 +84,7 @@ export class Cache {
     }
     if (structure.roles) {
       structure.roles.forEach((roleID) => {
-        emoji.roles.set(roleID, emoji.guild.roles.get(roleID) as Role);
+        emoji.roles.set(roleID, emoji.guild().roles.get(roleID) as Role);
       });
     }
 
@@ -190,7 +190,7 @@ export class Cache {
 
     structure.roles.forEach((roleID) => {
       if (!member.roles.has(roleID)) {
-        member.roles.set(roleID, member.guild.roles.get(roleID) as Role);
+        member.roles.set(roleID, member.guild().roles.get(roleID) as Role);
       }
     });
 

@@ -5,7 +5,7 @@ import {
   RawActivityParty,
   RawActivitySecrets,
   RawActivityFlags,
-} from "../network/event_handling/RawStructures.ts";
+} from "../util/RawStructures.ts";
 import { Client } from "../client/Client.ts";
 import { GuildEmoji } from "./GuildEmoji.ts";
 import { ActivityAssets } from "./ActivityAssets.ts";

@@ -1,4 +1,4 @@
-import { RawActivityAssets } from "../network/event_handling/RawStructures.ts";
+import { RawActivityAssets } from "../util/RawStructures.ts";
 
 export class ActivityAssets {
   /** the id for a large asset of the activity, usually a snowflake */
