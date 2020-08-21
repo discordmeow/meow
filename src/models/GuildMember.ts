@@ -5,6 +5,8 @@ import { RawGuildMember } from "../network/event_handling/RawStructures.ts";
 import { Role } from "./Role.ts";
 
 export class GuildMember {
+  /** the ID of the member's guild */
+  public guildID: string;
   /** the user this guild member represents */
   public user!: User;
   /** this users guild nickname */
@@ -22,12 +24,18 @@ export class GuildMember {
 
   constructor(
     structure: RawGuildMember,
-    public guild: Guild,
+    guild: Guild,
     public client: Client,
   ) {
     if (structure.user) this.user = client.cache.addUser(structure.user);
     this.joinedAt = structure.joined_at;
 
+    this.guildID = guild.id;
+
     client.cache.patchMember(this, structure);
+  }
+
+  get guild(): Guild {
+    return this.client.cache.guilds.get(this.guildID) as Guild;
   }
 }
