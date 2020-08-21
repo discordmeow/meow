@@ -2,6 +2,10 @@ import { Client } from "../client/Client.ts";
 import { Resolver } from "../util/Resolver.ts";
 import { User } from "./User.ts";
 import { Guild } from "./Guild.ts";
+import {
+  RawChannel,
+  RawOverwrite,
+} from "../util/RawStructures.ts";
 
 export type ChannelTypes =
   | "GUILD_TEXT"
@@ -12,12 +16,7 @@ export type ChannelTypes =
   | "GUILD_NEWS"
   | "GUILD_STORE";
 
-export interface Overwrite {
-  id: string;
-  type: "role" | "member";
-  allow: number;
-  deny: number;
-}
+export type Overwrite = RawOverwrite;
 
 export class Channel {
   /** the id of this channel */
@@ -31,7 +30,7 @@ export class Channel {
   /** explicit permission overwrites for members and roles */
   public permissionOverwrites?: Overwrite[];
   /** the name of the channel (2-100 characters) */
-  public name: string;
+  public name?: string;
   /** the channel topic (0-1024 characters) */
   public topic?: string;
   /** whether the channel is nsfw */
@@ -56,9 +55,10 @@ export class Channel {
   public parentID?: string;
   /** when the last pinned message was pinned */
   public lastPinTimestamp?: number;
-  constructor(structure: any, public client: Client) {
+
+  constructor(structure: RawChannel, public client: Client) {
     this.id = structure.id;
-    this.type = Resolver.toHumanReadableChannelType(structure.type);
+    this.type = Resolver.toStringChannelType(structure.type);
     this.guildID = structure.guild_id || undefined;
     this.position = structure.position || undefined;
     this.permissionOverwrites = structure.permission_overwrites || undefined;
@@ -72,12 +72,12 @@ export class Channel {
     this.recipients = undefined;
     if (structure.recipients) {
       this.recipients = [];
-      structure.recipients.map((recipient: any): void => {
-        this.recipients?.push(client.cache.addUser(recipient));
+      structure.recipients.forEach((recipient): void => {
+        (this.recipients as User[]).push(client.cache.addUser(recipient));
       });
     }
     this.icon = structure.icon || undefined;
-    this.ownerID = structure.ownerID || undefined;
+    this.ownerID = structure.owner_id || undefined;
     this.applicationID = structure.application_id || undefined;
     this.parentID = structure.parent_id || undefined;
     this.lastPinTimestamp = structure.last_pin_timestamp || undefined;
@@ -87,11 +87,11 @@ export class Channel {
     return typeof this.lastMessageID === "undefined";
   }
 
-  get guild(): Guild | undefined {
+  public guild(): Guild | undefined {
     if (!this.guildID) {
       return;
     }
 
-    return this.client.cache.guilds.get(this.guildID) as Guild;
+    return this.client.cache.guilds.get(this.guildID);
   }
 }

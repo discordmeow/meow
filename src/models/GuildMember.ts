@@ -1,7 +1,7 @@
 import { Client } from "../client/Client.ts";
 import { Guild } from "./Guild.ts";
 import { User } from "./User.ts";
-import { RawGuildMember } from "../network/event_handling/RawStructures.ts";
+import { RawGuildMember } from "../util/RawStructures.ts";
 import { Role } from "./Role.ts";
 
 export class GuildMember {
@@ -35,7 +35,7 @@ export class GuildMember {
     client.cache.patchMember(this, structure);
   }
 
-  get guild(): Guild {
+  public guild(): Guild {
     return this.client.cache.guilds.get(this.guildID) as Guild;
   }
 }

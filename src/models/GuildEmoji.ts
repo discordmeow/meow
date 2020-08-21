@@ -2,7 +2,7 @@ import { Client } from "../client/Client.ts";
 import { Guild } from "./Guild.ts";
 import { Role } from "./Role.ts";
 import { User } from "./User.ts";
-import { RawEmoji } from "../network/event_handling/RawStructures.ts";
+import { RawEmoji } from "../util/RawStructures.ts";
 
 export class GuildEmoji {
   /** Emoji ID */
@@ -33,7 +33,7 @@ export class GuildEmoji {
     client.cache.patchEmoji(this, structure);
   }
 
-  get guild(): Guild {
+  public guild(): Guild {
     return this.client.cache.guilds.get(this.guildID) as Guild;
   }
 }
