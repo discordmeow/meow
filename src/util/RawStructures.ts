@@ -40,9 +40,14 @@ export interface RawRole {
   /** if this role is pinned in the user listing */
   hoist: boolean;
   position: number;
+  /** legacy */
   permissions: number;
+  /** permission bit set */
+  permissions_new: string;
   /** whether this role is managed by an integration */
   managed: boolean;
+  /** whether this role is mentionable */
+  mentionnable: boolean;
 }
 
 export interface RawEmoji {
@@ -67,7 +72,7 @@ export interface RawVoiceState {
   session_id: string;
   deaf: boolean;
   mute: boolean;
-  self_dead: boolean;
+  self_deaf: boolean;
   self_mute: boolean;
   self_stream?: boolean;
   self_video: boolean;
@@ -82,6 +87,7 @@ export interface RawChannel {
   permission_overwrites?: RawOverwrite[];
   name?: string;
   topic?: string;
+  nsfw?: boolean;
   last_message_id?: string;
   bitrate?: number;
   user_limit?: number;
@@ -101,8 +107,12 @@ export interface RawChannel {
 export interface RawOverwrite {
   id: string;
   type: "role" | "member";
+  /** legacy */
   allow: number;
+  allow_new: string;
+  /** legacy */
   deny: number;
+  deny_new: string;
 }
 
 export interface RawClientStatus {
@@ -122,7 +132,7 @@ export interface RawActivity {
   type: RawActivityTypes;
   url?: string;
   created_at: number;
-  timestamps: RawActivityTimestamps;
+  timestamps?: RawActivityTimestamps;
   application_id?: string;
   details?: string;
   state?: string;
@@ -190,7 +200,6 @@ export enum RawVerificationLevel {
   /** must have verified email on account */
   LOW,
   /** must be registered on Discord for longer than 5 minutes */
-
   MEDIUM,
   /** (╯°□°）╯︵ ┻━┻ - must be a member of the server for longer than 10 minutes */
   HIGH,
