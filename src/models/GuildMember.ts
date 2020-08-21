@@ -27,10 +27,10 @@ export class GuildMember {
     guild: Guild,
     public client: Client,
   ) {
-    if (structure.user) this.user = client.cache.addUser(structure.user);
+    this.guildID = guild.id;
     this.joinedAt = structure.joined_at;
 
-    this.guildID = guild.id;
+    if (structure.user) this.user = client.cache.addUser(structure.user);
 
     client.cache.patchMember(this, structure);
   }
