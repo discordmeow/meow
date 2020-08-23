@@ -47,6 +47,6 @@ export class VoiceState {
   }
 
   public guild(): Guild {
-    return this.client.cache.guilds.get(this.guildID) as Guild
+    return this.client.cache.guilds.get(this.guildID) as Guild;
   }
 }

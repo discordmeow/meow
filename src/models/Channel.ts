@@ -25,7 +25,7 @@ export interface Overwrite {
 
 export interface BaseChannel {
   readonly id: string;
-  type: ChannelType  
+  type: ChannelType;
 }
 
 export class Channel {
@@ -66,10 +66,11 @@ export class Channel {
   /** when the last pinned message was pinned */
   public lastPinTimestamp?: number;
 
-  private _toString = (["GUILD_NEWS", "GUILD_STORE", "GUILD_TEXT"] as ChannelType[])
-      .includes(this.type)
-    ? `<#${this.id}>`
-    : this.id;
+  private _toString =
+    (["GUILD_NEWS", "GUILD_STORE", "GUILD_TEXT"] as ChannelType[])
+        .includes(this.type)
+      ? `<#${this.id}>`
+      : this.id;
 
   constructor(structure: RawChannel, public client: Client) {
     this.id = structure.id;
@@ -115,6 +116,6 @@ export class Channel {
   }
 
   public toString() {
-    return this._toString
+    return this._toString;
   }
 }
