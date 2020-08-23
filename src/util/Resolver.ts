@@ -1,7 +1,7 @@
-import { ChannelTypes } from "../models/Channel.ts";
+import { ChannelType } from "../models/Channel.ts";
 
 export class Resolver {
-  private static _channelTypes: ChannelTypes[] = [
+  private static _channelTypes: ChannelType[] = [
     "GUILD_TEXT",
     "DM",
     "GUILD_VOICE",
@@ -12,7 +12,7 @@ export class Resolver {
   ];
 
   /** Convert an API channel.type to a human readable one */
-  public static toStringChannelType(type: number): ChannelTypes {
+  public static toStringChannelType(type: number): ChannelType {
     if (!this._channelTypes[type]) {
       throw new RangeError("`type` must be between 0 and 6!");
     }
@@ -20,7 +20,7 @@ export class Resolver {
   }
 
   /** Convert a human readable channel type to the API index */
-  public static toNumberChannelType(type: ChannelTypes): number {
+  public static toNumberChannelType(type: ChannelType): number {
     if (!this._channelTypes.includes(type)) {
       throw new TypeError("`type` must be a valid ChannelType!");
     }

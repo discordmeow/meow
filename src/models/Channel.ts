@@ -7,7 +7,7 @@ import {
   RawOverwrite,
 } from "../util/RawStructures.ts";
 
-export type ChannelTypes =
+export type ChannelType =
   | "GUILD_TEXT"
   | "DM"
   | "GUILD_VOICE"
@@ -16,13 +16,23 @@ export type ChannelTypes =
   | "GUILD_NEWS"
   | "GUILD_STORE";
 
-export type Overwrite = RawOverwrite;
+export interface Overwrite {
+  id: string;
+  type: RawOverwrite["type"];
+  allow: RawOverwrite["allow_new"];
+  deny: RawOverwrite["deny_new"];
+}
+
+export interface BaseChannel {
+  readonly id: string;
+  type: ChannelType  
+}
 
 export class Channel {
   /** the id of this channel */
   public readonly id: string;
   /** the type of channel */
-  public type: ChannelTypes;
+  public type: ChannelType;
   /** the id of the guild */
   public guildID?: string;
   /** sorting position of the channel */
@@ -56,12 +66,21 @@ export class Channel {
   /** when the last pinned message was pinned */
   public lastPinTimestamp?: number;
 
+  private _toString = (["GUILD_NEWS", "GUILD_STORE", "GUILD_TEXT"] as ChannelType[])
+      .includes(this.type)
+    ? `<#${this.id}>`
+    : this.id;
+
   constructor(structure: RawChannel, public client: Client) {
     this.id = structure.id;
     this.type = Resolver.toStringChannelType(structure.type);
     this.guildID = structure.guild_id || undefined;
     this.position = structure.position || undefined;
-    this.permissionOverwrites = structure.permission_overwrites || undefined;
+    if (structure.permission_overwrites) {
+      this.permissionOverwrites = structure.permission_overwrites.map((
+        { id, type, allow_new, deny_new },
+      ) => ({ id, type, allow: allow_new, deny: deny_new }));
+    }
     this.name = structure.name;
     this.topic = structure.topic || undefined;
     this.nsfw = structure.nsfw || undefined;
@@ -93,5 +112,9 @@ export class Channel {
     }
 
     return this.client.cache.guilds.get(this.guildID);
+  }
+
+  public toString() {
+    return this._toString
   }
 }

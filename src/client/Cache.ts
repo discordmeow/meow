@@ -137,10 +137,10 @@ export class Cache {
   }
 
   public loadFullGuild(guild: Guild, structure: RawGuild) {
-    ((structure.roles) as RawRole[]).map((role): void => {
+    structure.roles.map((role): void => {
       guild.roles.set(role.id, new Role(role, guild, this.client));
     });
-    ((structure.emojis) as RawEmoji[]).map((emoji): void => {
+    structure.emojis.map((emoji): void => {
       guild.emojis.set(emoji.id as string, this.addEmoji(emoji, guild));
     });
 
