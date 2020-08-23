@@ -8,14 +8,102 @@ import {
 import { GATEWAY_BASE_URL, GATEWAY_VERSION } from "../util/Constants.ts";
 import { EventHandler } from "./EventHandler.ts";
 import { GatewayError } from "../errors/GatewayError.ts";
+import { RawActivity } from "../util/RawStructures.ts";
 
 const { stringify, parse } = JSON;
 
+export interface DataStatusUpdate {
+  since?: number;
+  game?: RawActivity;
+  status: string;
+  afk: boolean;
+}
+
 export interface Payload {
   op: number;
-  d: any;
+  d?: any;
   s?: number;
   t?: string;
+}
+
+export interface PayloadHello extends Payload {
+  op: 10;
+  d: {
+    heartbeat_interval: number;
+  };
+}
+
+export interface PayloadIdentify extends Payload {
+  op: 2;
+  d: {
+    token: string;
+    properties: {
+      "$os": string;
+      "$browser": string;
+      "$device": string;
+    };
+    compress?: boolean;
+    large_threshold?: number;
+    shard?: [number, number];
+    presence?: DataStatusUpdate;
+    guild_subscriptions?: boolean;
+    intents?: number;
+  };
+}
+
+export interface PayloadResume extends Payload {
+  op: 6;
+  d: {
+    token: string;
+    session_id: string;
+    seq: number;
+  };
+}
+
+export interface PayloadResumeSend extends Payload {
+  op: 6;
+  d: {
+    token: string;
+    session_id: string;
+    seq?: number;
+  };
+}
+
+export interface PayloadHeartbeat extends Payload {
+  op: 1;
+  d: number;
+}
+
+export interface PayloadHeartbeatSend extends Payload {
+  op: 1;
+  d?: number;
+}
+
+export interface PayloadGuildRequestMembers extends Payload {
+  op: 8;
+  d: {
+    guild_id: string;
+    query?: string;
+    limit: number;
+    presences?: boolean;
+    user_ids?: string | string[];
+    nonce?: string;
+  };
+}
+
+export interface PayloadVoiceStateUpdate extends Payload {
+  op: 4;
+  d: {
+    guild_id: string;
+    channel_id?: string;
+    self_mute: boolean;
+    self_deaf: boolean;
+  };
+}
+
+export interface PayloadStatusUpdate extends Payload {
+  op: 3;
+  d: DataStatusUpdate;
 }
 
 export enum Opcodes {
@@ -53,9 +141,9 @@ export class WebSocketHandler {
   public socket!: WebSocket;
   public eventHandler = new EventHandler(this, this.client);
 
-  public heartbeatInterval!: number;
+  public heartbeatInterval?: number;
 
-  public sequence?: number | null;
+  public sequence?: number;
   public sessionID!: string;
   public ackReceived = true;
 
@@ -85,14 +173,16 @@ export class WebSocketHandler {
   }
 
   private async sendResume() {
-    await this.socket.send(stringify({
+    await (async (payload: PayloadResumeSend) => {
+      await this.socket.send(stringify(payload));
+    })({
       op: Opcodes.RESUME,
       d: {
         token: this.client.token,
         session_id: this.sessionID,
         seq: this.sequence,
       },
-    }));
+    });
   }
 
   private async handleReconnect() {
@@ -141,10 +231,12 @@ export class WebSocketHandler {
 
   private async sendHeartbeat() {
     if (this.ackReceived) {
-      await this.socket.send(stringify({
+      await (async (payload: PayloadHeartbeatSend) => {
+        await this.socket.send(stringify(payload));
+      })({
         op: Opcodes.HEARTBEAT,
         d: this.sequence,
-      }));
+      });
     } else {
       await this.handleReconnect();
     }
@@ -162,7 +254,9 @@ export class WebSocketHandler {
   }
 
   private async sendIdentify() {
-    await this.socket.send(stringify({
+    await (async (payload: PayloadIdentify) => {
+      await this.socket.send(stringify(payload));
+    })({
       op: Opcodes.IDENTIFY,
       d: {
         token: this.client.token,
@@ -173,7 +267,7 @@ export class WebSocketHandler {
         },
         large_threshold: 250,
       },
-    }));
+    });
   }
 
   private async handleGatewayError({ code, reason }: WebSocketCloseEvent) {
