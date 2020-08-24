@@ -1,5 +1,6 @@
 import { Client } from "../client/Client.ts";
 import { Guild } from "./Guild.ts";
+import { RawRole } from "../util/RawStructures.ts";
 
 export class Role {
   public readonly id: string;
@@ -9,10 +10,10 @@ export class Role {
   public position: number;
   public permissions: number;
   public managed: boolean;
-  public mentionable: boolean;
+  public mentionnable: boolean;
 
   constructor(
-    structure: any,
+    structure: RawRole,
     public guild: Guild,
     public client: Client,
   ) {
@@ -23,6 +24,6 @@ export class Role {
     this.position = structure.position;
     this.permissions = structure.permissions;
     this.managed = structure.managed;
-    this.mentionable = structure.mentionable;
+    this.mentionnable = structure.mentionnable;
   }
 }

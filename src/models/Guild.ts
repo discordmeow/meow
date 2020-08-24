@@ -7,9 +7,12 @@ import { VoiceState } from "./VoiceState.ts";
 import {
   RawGuildFeatures,
   RawGuild,
-} from "../network/event_handling/RawStructures.ts";
+  RawMFALevel,
+} from "../util/RawStructures.ts";
+import { Presence } from "./Presence.ts";
 
 export type GuildFeatures = RawGuildFeatures;
+export type MFALevel = RawMFALevel;
 
 export class Guild {
   /** guild id */
@@ -23,11 +26,11 @@ export class Guild {
   /** discovery splash hash; only present for guilds with the "DISCOVERABLE" feature */
   public discoverySplash?: string;
   /** true if the bot is the owner of the guild */
-  public owner!: boolean | null;
+  public owner?: boolean;
   /** id of owner */
   public ownerID!: string;
   /** total permissions for the bot in the guild (excludes overrides) */
-  public permissions!: number | null;
+  public permissions?: number;
   /** voice region id for the guild */
   public region!: string;
   /** voice region id for the guild */
@@ -48,13 +51,13 @@ export class Guild {
   /** enabled guild features */
   public features!: GuildFeatures[];
   /** required MFA level for the guild */
-  public mfaLevel!: number;
+  public mfaLevel!: MFALevel;
   /** application id of the guild creator if it is bot-created */
   public applicationID?: string;
   /** true if the server widget is enabled */
-  public widgetEnable!: boolean | null;
+  public widgetEnable?: boolean;
   /** the channel id that the widget will generate an invite to, or null if set to no invite */
-  public widgetChannelID?: string | null;
+  public widgetChannelID?: string;
   /** the id of the channel where guild notices such as welcome messages and boost events are posted */
   public systemChannelID?: string;
   /** system channel flags */
@@ -75,6 +78,8 @@ export class Guild {
   public members = new Map<string, GuildMember>();
   /** channels in the guild */
   public channels = new Map<string, Channel>();
+  /** presences of the members in the guild, will only include non-offline members if the size is greater than large threshold */
+  public presences = new Map<string, Presence>();
 
   constructor(structure: RawGuild, public client: Client) {
     this.id = structure.id;

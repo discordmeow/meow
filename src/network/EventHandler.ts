@@ -1,10 +1,10 @@
-import { Client } from "../../client/Client.ts";
-import { Channel } from "../../models/Channel.ts";
-import { Guild } from "../../models/Guild.ts";
-import { GuildEmoji } from "../../models/GuildEmoji.ts";
-import { GuildMember } from "../../models/GuildMember.ts";
-import { Role } from "../../models/Role.ts";
-import { WebSocketHandler } from "../WebSocketHandler.ts";
+import { Client } from "../client/Client.ts";
+import { Channel } from "../models/Channel.ts";
+import { Guild } from "../models/Guild.ts";
+import { GuildEmoji } from "../models/GuildEmoji.ts";
+import { GuildMember } from "../models/GuildMember.ts";
+import { Role } from "../models/Role.ts";
+import { WebSocketHandler } from "./WebSocketHandler.ts";
 import {
   RawChannel,
   RawChannelPinsUpdate,
@@ -19,7 +19,7 @@ import {
   RawGuildMembersChunk,
   RawGuildMemberUpdate,
   RawReady,
-} from "./RawStructures.ts";
+} from "../util/RawStructures.ts";
 
 export interface EventData {
   name: string;
@@ -151,7 +151,7 @@ export class EventHandler {
   private handleChannelDelete(data: RawChannel) {
     const channel: Channel = this.client.cache.channels.get(data.id) as Channel;
 
-    channel.guild?.channels.delete(
+    channel.guild()?.channels.delete(
       channel.id,
     );
 
@@ -160,16 +160,18 @@ export class EventHandler {
   }
 
   private handleChannelPinsUpdate(data: RawChannelPinsUpdate) {
-    const channel: Channel | undefined = this.client.cache.channels.get(
+    const channel: Channel = this.client.cache.channels.get(
       data.channel_id,
-    );
+    ) as Channel;
+
     if (channel && data.last_pin_timestamp) {
       channel.lastPinTimestamp = data.last_pin_timestamp;
     }
+
     this.client.events.channelPinsUpdate.post(
       {
         channel: channel,
-        guild: this.client.cache.guilds.get(data.guild_id ?? ""),
+        guild: this.client.cache.guilds.get(data.guild_id as string),
         lastPinTimestamp: data.last_pin_timestamp,
       },
     );
@@ -281,7 +283,7 @@ export class EventHandler {
     member.user = this.client.cache.patchUser(member.user, data.user);
     data.roles.forEach((roleID) => {
       if (!member.roles.has(roleID)) {
-        member.roles.set(roleID, <Role> member.guild.roles.get(roleID));
+        member.roles.set(roleID, <Role> member.guild().roles.get(roleID));
       }
     });
     this.client.cache.guilds.get(data.guild_id)?.members.set(

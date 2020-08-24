@@ -7,16 +7,19 @@ import { User } from "../models/User.ts";
 import {
   RawGuild,
   RawUser,
-  RawRole,
   RawEmoji,
   RawChannel,
-  RawVoiceState,
   RawGuildMember,
-} from "../network/event_handling/RawStructures.ts";
+  RawPresenceUpdate,
+  RawActivity,
+} from "../util/RawStructures.ts";
 import { GuildMember } from "../models/GuildMember.ts";
 import { VoiceState } from "../models/VoiceState.ts";
+import { Presence } from "../models/Presence.ts";
+import { Activity } from "../models/Activity.ts";
+import { Resolver } from "../util/Resolver.ts";
 
-export class CacheManager {
+export class Cache {
   /** Map containing every cached users */
   public users: Map<string, User> = new Map();
   /** Map containing every cached guilds */
@@ -80,7 +83,7 @@ export class CacheManager {
     }
     if (structure.roles) {
       structure.roles.forEach((roleID) => {
-        emoji.roles.set(roleID, emoji.guild.roles.get(roleID) as Role);
+        emoji.roles.set(roleID, emoji.guild().roles.get(roleID) as Role);
       });
     }
 
@@ -100,30 +103,29 @@ export class CacheManager {
 
   /** Update a cached Guild */
   public patchGuild(guild: Guild, structure: RawGuild): Guild {
-    if (structure.name) guild.name = structure.name;
+    if (structure.name !== guild.name) guild.name = structure.name;
+    if (structure.owner_id !== guild.ownerID) guild.ownerID = structure.owner_id;
+    if (structure.afk_timeout !== guild.afkTimeout) guild.afkTimeout = structure.afk_timeout;
+    guild.verificationLevel = structure.verification_level;
+    guild.defaultMessageNotifications = structure.default_message_notifications;
+    guild.explicitContentFilter = structure.explicit_content_filter;
+    guild.features = structure.features;
+    guild.mfaLevel = structure.mfa_level;
+
+    if (structure.region !== guild.region) guild.region = structure.region;
+
+    if (Boolean(structure.owner) !== Boolean(guild.owner)) {
+      guild.owner = structure.owner;
+    }
+
     if (structure.icon) guild.icon = structure.icon;
     if (structure.splash) guild.splash = structure.splash;
     if (structure.discovery_splash) {
       guild.discoverySplash = structure.discovery_splash;
     }
-    if (structure.owner) guild.owner = structure.owner;
-    if (structure.owner_id) guild.ownerID = structure.owner_id;
     if (structure.permissions) guild.permissions = structure.permissions;
-    if (structure.region) guild.region = structure.region;
     if (structure.afk_channel_id) guild.afkChannelID = structure.afk_channel_id;
-    if (structure.afk_timeout) guild.afkTimeout = structure.afk_timeout;
-    if (structure.verification_level) {
-      guild.verificationLevel = structure.verification_level;
-    }
-    if (structure.default_message_notifications) {
-      guild.defaultMessageNotifications =
-        structure.default_message_notifications;
-    }
-    if (structure.explicit_content_filter) {
-      guild.explicitContentFilter = structure.explicit_content_filter;
-    }
-    if (structure.features) guild.features = structure.features;
-    if (structure.mfa_level) guild.mfaLevel = structure.mfa_level;
+
     if (structure.application_id) {
       guild.applicationID = structure.application_id;
     }
@@ -133,25 +135,25 @@ export class CacheManager {
   }
 
   public loadFullGuild(guild: Guild, structure: RawGuild) {
-    ((structure.roles) as RawRole[]).map((role): void => {
+    structure.roles.map((role): void => {
       guild.roles.set(role.id, new Role(role, guild, this.client));
     });
-    ((structure.emojis) as RawEmoji[]).map((emoji): void => {
+    structure.emojis.map((emoji): void => {
       guild.emojis.set(emoji.id as string, this.addEmoji(emoji, guild));
     });
 
-    ((structure.voice_states) as RawVoiceState[]).map((voiceState): void => {
+    structure.voice_states?.map((voiceState): void => {
       guild.voiceStates.push(new VoiceState(voiceState, guild, this.client));
     });
 
-    ((structure.members) as RawGuildMember[]).map((member): void => {
+    structure.members?.map((member): void => {
       guild.members.set(
         ((member.user) as RawUser).id,
         new GuildMember(member, guild, this.client),
       );
     });
 
-    ((structure.channels) as RawChannel[]).map((channel): void => {
+    structure.channels?.map((channel): void => {
       guild.channels.set(channel.id, this.addChannel(channel));
     });
 
@@ -171,6 +173,8 @@ export class CacheManager {
   /** Update a cached Channel */
   public patchChannel(channel: Channel, structure: RawChannel): Channel {
     // todo(): patcher for Channel
+    const structureType = Resolver.toStringChannelType(structure.type);
+    if (structureType !== channel.type) channel.type = structureType;
 
     return channel;
   }
@@ -179,6 +183,8 @@ export class CacheManager {
     member: GuildMember,
     structure: RawGuildMember,
   ): GuildMember {
+    const guild = member.guild();
+
     if (structure.premium_since) member.premiumSince = structure.premium_since;
     member.nick = structure.nick;
     member.deaf = structure.deaf;
@@ -186,7 +192,7 @@ export class CacheManager {
 
     structure.roles.forEach((roleID) => {
       if (!member.roles.has(roleID)) {
-        member.roles.set(roleID, member.guild.roles.get(roleID) as Role);
+        member.roles.set(roleID, guild.roles.get(roleID) as Role);
       }
     });
 
@@ -195,5 +201,25 @@ export class CacheManager {
     });
 
     return member;
+  }
+
+  public patchActivity(activity: Activity, structure: RawActivity) {
+    activity.url = structure.url;
+
+    if (activity.name !== structure.name) activity.name = structure.name;
+    if (activity.type !== structure.type) activity.type = structure.type;
+
+    if (activity.createdAt !== structure.created_at) {
+      activity.createdAt = structure.created_at;
+    }
+    if (structure.timestamps) {
+      activity.timestamps = structure.timestamps;
+    }
+  }
+
+  public patchPresence(presence: Presence, structure: RawPresenceUpdate) {
+    // Todo(Cat66000)
+
+    presence.roles = structure.roles;
   }
 }
