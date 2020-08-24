@@ -26,11 +26,11 @@ export class Guild {
   /** discovery splash hash; only present for guilds with the "DISCOVERABLE" feature */
   public discoverySplash?: string;
   /** true if the bot is the owner of the guild */
-  public owner!: boolean | null;
+  public owner?: boolean;
   /** id of owner */
   public ownerID!: string;
   /** total permissions for the bot in the guild (excludes overrides) */
-  public permissions!: number | null;
+  public permissions?: number;
   /** voice region id for the guild */
   public region!: string;
   /** voice region id for the guild */
@@ -55,9 +55,9 @@ export class Guild {
   /** application id of the guild creator if it is bot-created */
   public applicationID?: string;
   /** true if the server widget is enabled */
-  public widgetEnable!: boolean | null;
+  public widgetEnable?: boolean;
   /** the channel id that the widget will generate an invite to, or null if set to no invite */
-  public widgetChannelID?: string | null;
+  public widgetChannelID?: string;
   /** the id of the channel where guild notices such as welcome messages and boost events are posted */
   public systemChannelID?: string;
   /** system channel flags */
