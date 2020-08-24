@@ -6,15 +6,22 @@ import {
   isWebSocketCloseEvent,
 } from "../../deps.ts";
 import { GATEWAY_BASE_URL, GATEWAY_VERSION } from "../util/Constants.ts";
-import { EventHandler } from "./event_handling/EventHandler.ts";
+import { EventHandler } from "./EventHandler.ts";
 import { GatewayError } from "../errors/GatewayError.ts";
-import { Guild } from "../models/Guild.ts";
+import { RawActivity } from "../util/RawStructures.ts";
 
 const { stringify, parse } = JSON;
 
+export interface DataStatusUpdate {
+  since?: number;
+  game?: RawActivity;
+  status: string;
+  afk: boolean;
+}
+
 export interface Payload {
   op: number;
-  d: any;
+  d?: any;
   s?: number;
   t?: string;
 }
@@ -54,9 +61,9 @@ export class WebSocketHandler {
   public socket!: WebSocket;
   public eventHandler = new EventHandler(this, this.client);
 
-  public heartbeatInterval!: number;
+  public heartbeatInterval?: number;
 
-  public sequence?: number | null;
+  public sequence?: number;
   public sessionID!: string;
   public ackReceived = true;
 

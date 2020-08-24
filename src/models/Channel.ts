@@ -2,8 +2,12 @@ import { Client } from "../client/Client.ts";
 import { Resolver } from "../util/Resolver.ts";
 import { User } from "./User.ts";
 import { Guild } from "./Guild.ts";
+import {
+  RawChannel,
+  RawOverwrite,
+} from "../util/RawStructures.ts";
 
-export type ChannelTypes =
+export type ChannelType =
   | "GUILD_TEXT"
   | "DM"
   | "GUILD_VOICE"
@@ -14,16 +18,21 @@ export type ChannelTypes =
 
 export interface Overwrite {
   id: string;
-  type: "role" | "member";
-  allow: number;
-  deny: number;
+  type: RawOverwrite["type"];
+  allow: RawOverwrite["allow_new"];
+  deny: RawOverwrite["deny_new"];
 }
 
-export class Channel {
+export class BaseChannel {
+  public readonly id!: string;
+  public type!: ChannelType;
+}
+
+export class Channel implements BaseChannel {
   /** the id of this channel */
   public readonly id: string;
   /** the type of channel */
-  public type: ChannelTypes;
+  public type: ChannelType;
   /** the id of the guild */
   public guildID?: string;
   /** sorting position of the channel */
@@ -31,7 +40,7 @@ export class Channel {
   /** explicit permission overwrites for members and roles */
   public permissionOverwrites?: Overwrite[];
   /** the name of the channel (2-100 characters) */
-  public name: string;
+  public name?: string;
   /** the channel topic (0-1024 characters) */
   public topic?: string;
   /** whether the channel is nsfw */
@@ -56,12 +65,23 @@ export class Channel {
   public parentID?: string;
   /** when the last pinned message was pinned */
   public lastPinTimestamp?: number;
-  constructor(structure: any, public client: Client) {
+
+  private _toString =
+    (["GUILD_NEWS", "GUILD_STORE", "GUILD_TEXT"] as ChannelType[])
+        .includes(this.type)
+      ? `<#${this.id}>`
+      : this.id;
+
+  constructor(structure: RawChannel, public client: Client) {
     this.id = structure.id;
-    this.type = Resolver.toHumanReadableChannelType(structure.type);
+    this.type = Resolver.toStringChannelType(structure.type);
     this.guildID = structure.guild_id || undefined;
     this.position = structure.position || undefined;
-    this.permissionOverwrites = structure.permission_overwrites || undefined;
+    if (structure.permission_overwrites) {
+      this.permissionOverwrites = structure.permission_overwrites.map((
+        { id, type, allow_new, deny_new },
+      ) => ({ id, type, allow: allow_new, deny: deny_new }));
+    }
     this.name = structure.name;
     this.topic = structure.topic || undefined;
     this.nsfw = structure.nsfw || undefined;
@@ -72,12 +92,12 @@ export class Channel {
     this.recipients = undefined;
     if (structure.recipients) {
       this.recipients = [];
-      structure.recipients.map((recipient: any): void => {
-        this.recipients?.push(client.cache.addUser(recipient));
+      structure.recipients.forEach((recipient): void => {
+        (this.recipients as User[]).push(client.cache.addUser(recipient));
       });
     }
     this.icon = structure.icon || undefined;
-    this.ownerID = structure.ownerID || undefined;
+    this.ownerID = structure.owner_id || undefined;
     this.applicationID = structure.application_id || undefined;
     this.parentID = structure.parent_id || undefined;
     this.lastPinTimestamp = structure.last_pin_timestamp || undefined;
@@ -87,11 +107,15 @@ export class Channel {
     return typeof this.lastMessageID === "undefined";
   }
 
-  get guild(): Guild | undefined {
+  public guild(): Guild | undefined {
     if (!this.guildID) {
       return;
     }
 
-    return this.client.cache.guilds.get(this.guildID) as Guild;
+    return this.client.cache.guilds.get(this.guildID);
+  }
+
+  public toString() {
+    return this._toString;
   }
 }

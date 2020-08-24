@@ -2,11 +2,13 @@ import { Client } from "../client/Client.ts";
 import { Guild } from "./Guild.ts";
 import { Role } from "./Role.ts";
 import { User } from "./User.ts";
-import { RawEmoji } from "../network/event_handling/RawStructures.ts";
+import { RawEmoji } from "../util/RawStructures.ts";
 
 export class GuildEmoji {
   /** Emoji ID */
   public readonly id: string;
+  /** The ID of the emoji's guild */
+  public guildID: string;
   /** Emoji name */
   public name!: string;
   /** User that created this emoji */
@@ -22,10 +24,16 @@ export class GuildEmoji {
   /** Whether this emoji must be wrapped in colons */
   public requireColons!: boolean;
 
-  constructor(structure: RawEmoji, public guild: Guild, public client: Client) {
+  constructor(structure: RawEmoji, guild: Guild, public client: Client) {
+    this.guildID = guild.id;
     this.id = structure.id as string;
+
     if (structure.user) this.user = client.cache.addUser(structure.user);
 
     client.cache.patchEmoji(this, structure);
+  }
+
+  public guild(): Guild {
+    return this.client.cache.guilds.get(this.guildID) as Guild;
   }
 }

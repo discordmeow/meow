@@ -1,6 +1,7 @@
-import { Client } from '../client/Client.ts';
-import { Guild } from './Guild.ts';
-import { GuildMember } from './GuildMember.ts';
+import { Client } from "../client/Client.ts";
+import { Guild } from "./Guild.ts";
+import { GuildMember } from "./GuildMember.ts";
+import { RawVoiceState } from "../util/RawStructures.ts";
 
 export class VoiceState {
   /** the guild id this voice state is for */
@@ -10,7 +11,7 @@ export class VoiceState {
   /** the user id this voice state is for */
   public userID: string;
   /** the guild member this voice state is for */
-  public member!: GuildMember | null;
+  public member?: GuildMember;
   /** the session id for this voice state */
   public sessionID: string;
   /** whether this user is deafened by the server */
@@ -28,11 +29,13 @@ export class VoiceState {
   /** whether this user is muted by the current user */
   public suppress: boolean;
 
-  constructor(structure: any, public guild: Guild, public client: Client) {
-    this.guildID = structure.guild_id || guild.id;
+  constructor(structure: RawVoiceState, guild: Guild, public client: Client) {
+    this.guildID = guild.id;
     this.channelID = structure.channel_id;
     this.userID = structure.user_id;
-    if (structure.member) this.member = guild.members.get(structure.member.user.id) ?? null;
+    if (structure.member) {
+      this.member = guild.members.get(structure.member.user?.id as string);
+    }
     this.sessionID = structure.session_id;
     this.deaf = structure.deaf;
     this.mute = structure.mute;
@@ -41,5 +44,9 @@ export class VoiceState {
     if (structure.self_stream) this.selfStream = structure.self_stream;
     this.selfVideo = structure.self_video;
     this.suppress = structure.suppress;
+  }
+
+  public guild(): Guild {
+    return this.client.cache.guilds.get(this.guildID) as Guild;
   }
 }

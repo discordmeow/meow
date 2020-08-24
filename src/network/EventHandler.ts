@@ -1,13 +1,13 @@
-import { Client } from "../../client/Client.ts";
-import { Channel } from "../../models/Channel.ts";
-import { Guild } from "../../models/Guild.ts";
-import { WebSocketHandler } from "../WebSocketHandler.ts";
+import { Client } from "../client/Client.ts";
+import { Channel } from "../models/Channel.ts";
+import { Guild } from "../models/Guild.ts";
+import { WebSocketHandler } from "./WebSocketHandler.ts";
 import {
   RawChannel,
   RawChannelPinsUpdate,
   RawGuild,
-  RawReady
-} from "./RawStructures.ts";
+  RawReady,
+} from "../util/RawStructures.ts";
 
 export interface EventData {
   name: string;
@@ -115,7 +115,7 @@ export class EventHandler {
   private handleChannelDelete(data: RawChannel) {
     const channel: Channel = this.client.cache.channels.get(data.id) as Channel;
 
-    channel.guild?.channels.delete(
+    channel.guild()?.channels.delete(
       channel.id,
     );
 
@@ -167,7 +167,7 @@ export class EventHandler {
   private handleGuildDelete(
     data: { id: string; unavailable?: boolean | null },
   ) {
-    const guild: Guild = <Guild>this.client.cache.guilds.get(data.id);
+    const guild: Guild = <Guild> this.client.cache.guilds.get(data.id);
     if (data.unavailable) {
       this.client.cache.unavailableGuilds.add(data.id);
       this.client.events.guildUnavailable.post(guild);

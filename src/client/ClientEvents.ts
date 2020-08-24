@@ -2,7 +2,7 @@ import { Evt } from "../../deps.ts";
 import { GatewayError } from "../errors/GatewayError.ts";
 import { Channel } from "../models/Channel.ts";
 import { Guild } from "../models/Guild.ts";
-import { RawChannelPinsUpdate } from "../network/event_handling/RawStructures.ts";
+import { RawChannelPinsUpdate } from "../util/RawStructures.ts";
 
 export class ClientEvents {
   /** Emitted when the client is ready */
