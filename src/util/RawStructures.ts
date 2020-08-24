@@ -355,3 +355,74 @@ export interface RawChannelPinsUpdate {
   /** the time at which the most recent pinned message was pinned */
   last_pin_timestamp?: number;
 }
+
+// ! Used for Guild Ban Add and Guild Ban Remove
+export interface RawGuildBan {
+  /** id of the guild */
+  guild_id: string;
+  /** the unbanned user */
+  user: RawUser;
+}
+
+export interface RawGuildEmojisUpdate {
+  /** id of the guild */
+  guild_id: string;
+  /** array of emojis */
+  emojis: RawEmoji[];
+}
+
+export interface RawGuildIntegrationsUpdate {
+  /** id of the guild whose integrations were updated */
+  guild_id: string;
+}
+
+export interface RawGuildMemberAdd {
+  /** The field user won't be included in the member object attached to MESSAGE_CREATE and MESSAGE_UPDATE gateway events. */
+  user?: RawUser;
+  nick?: string;
+  roles: RawRole["id"][];
+  joined_at: number;
+  premium_since?: number;
+  deaf: boolean;
+  mute: boolean;
+  /** id of the guild */
+  guild_id: string; // ! Extra field, see https://discord.com/developers/docs/topics/gateway#guild-member-add-guild-member-add-extra-fields
+}
+
+export interface RawGuildMemberRemove {
+  /** 	the id of the guild */
+  guild_id: string;
+  /** the user who was removed */
+  user: RawUser;
+}
+
+export interface RawGuildMemberUpdate {
+  /** the id of the guild */
+  guild_id: string;
+  /** user role ids */
+  roles: RawRole["id"][];
+  /** user role ids */
+  user: RawUser;
+  /** nickname of the user in the guild */
+  nick?: string;
+  /** when the user starting boosting the guild */
+  premium_since?: number;
+}
+
+export interface RawGuildMembersChunk {
+  /** the id of the guild */
+  guild_id: string;
+  /** set of guild members */
+  members: RawGuildMember[];
+  /** the chunk index in the expected chunks for this response *(0 <= chunk_index < chunk_count)* */
+  chunk_index: number;
+  /** the total number of expected chunks for this response */
+  chunk_count: number;
+  /** if passing an invalid id to `REQUEST_GUILD_MEMBERS`, it will be returned here */
+  not_found?: string[];
+  /** if passing true to `REQUEST_GUILD_MEMBERS`, presences of the returned members will be here */
+  presences?: null[];
+  // todo("models" branch): Presence model
+  /** the nonce used in the Guild Members Request */
+  nonce?: string;
+}
