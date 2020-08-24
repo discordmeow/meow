@@ -28,7 +28,7 @@ export interface BaseChannel {
   type: ChannelType;
 }
 
-export class Channel {
+export class Channel implements BaseChannel {
   /** the id of this channel */
   public readonly id: string;
   /** the type of channel */
