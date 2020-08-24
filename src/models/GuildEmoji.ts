@@ -12,7 +12,7 @@ export class GuildEmoji {
   /** Emoji name */
   public name!: string;
   /** User that created this emoji */
-  public user!: User | null;
+  public user?: User;
   /** Whether this emoji is managed */
   public managed!: boolean;
   /** Whether this emoji is animated */

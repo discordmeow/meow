@@ -16,7 +16,7 @@ export class GuildMember {
   /** when the user joined the guild */
   public joinedAt: number;
   /** when the user started boosting the guild */
-  public premiumSince?: number | null;
+  public premiumSince?: number;
   /** whether the user is deafened in voice channels */
   public deaf!: boolean;
   /** whether the user is deafened in voice channels */
