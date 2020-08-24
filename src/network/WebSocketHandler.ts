@@ -26,86 +26,6 @@ export interface Payload {
   t?: string;
 }
 
-export interface PayloadHello extends Payload {
-  op: 10;
-  d: {
-    heartbeat_interval: number;
-  };
-}
-
-export interface PayloadIdentify extends Payload {
-  op: 2;
-  d: {
-    token: string;
-    properties: {
-      "$os": string;
-      "$browser": string;
-      "$device": string;
-    };
-    compress?: boolean;
-    large_threshold?: number;
-    shard?: [number, number];
-    presence?: DataStatusUpdate;
-    guild_subscriptions?: boolean;
-    intents?: number;
-  };
-}
-
-export interface PayloadResume extends Payload {
-  op: 6;
-  d: {
-    token: string;
-    session_id: string;
-    seq: number;
-  };
-}
-
-export interface PayloadResumeSend extends Payload {
-  op: 6;
-  d: {
-    token: string;
-    session_id: string;
-    seq?: number;
-  };
-}
-
-export interface PayloadHeartbeat extends Payload {
-  op: 1;
-  d: number;
-}
-
-export interface PayloadHeartbeatSend extends Payload {
-  op: 1;
-  d?: number;
-}
-
-export interface PayloadGuildRequestMembers extends Payload {
-  op: 8;
-  d: {
-    guild_id: string;
-    query?: string;
-    limit: number;
-    presences?: boolean;
-    user_ids?: string | string[];
-    nonce?: string;
-  };
-}
-
-export interface PayloadVoiceStateUpdate extends Payload {
-  op: 4;
-  d: {
-    guild_id: string;
-    channel_id?: string;
-    self_mute: boolean;
-    self_deaf: boolean;
-  };
-}
-
-export interface PayloadStatusUpdate extends Payload {
-  op: 3;
-  d: DataStatusUpdate;
-}
-
 export enum Opcodes {
   DISPATCH,
   HEARTBEAT,
@@ -173,16 +93,14 @@ export class WebSocketHandler {
   }
 
   private async sendResume() {
-    await (async (payload: PayloadResumeSend) => {
-      await this.socket.send(stringify(payload));
-    })({
+    await this.socket.send(stringify({
       op: Opcodes.RESUME,
       d: {
         token: this.client.token,
         session_id: this.sessionID,
         seq: this.sequence,
       },
-    });
+    }));
   }
 
   private async handleReconnect() {
@@ -231,12 +149,10 @@ export class WebSocketHandler {
 
   private async sendHeartbeat() {
     if (this.ackReceived) {
-      await (async (payload: PayloadHeartbeatSend) => {
-        await this.socket.send(stringify(payload));
-      })({
+      await this.socket.send(stringify({
         op: Opcodes.HEARTBEAT,
         d: this.sequence,
-      });
+      }));
     } else {
       await this.handleReconnect();
     }
@@ -254,9 +170,7 @@ export class WebSocketHandler {
   }
 
   private async sendIdentify() {
-    await (async (payload: PayloadIdentify) => {
-      await this.socket.send(stringify(payload));
-    })({
+    await this.socket.send(stringify({
       op: Opcodes.IDENTIFY,
       d: {
         token: this.client.token,
@@ -267,7 +181,7 @@ export class WebSocketHandler {
         },
         large_threshold: 250,
       },
-    });
+    }));
   }
 
   private async handleGatewayError({ code, reason }: WebSocketCloseEvent) {
