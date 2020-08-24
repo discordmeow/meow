@@ -105,8 +105,12 @@ export class Cache {
   /** Update a cached Guild */
   public patchGuild(guild: Guild, structure: RawGuild): Guild {
     if (structure.name !== guild.name) guild.name = structure.name;
-    if (structure.owner_id !== guild.ownerID) guild.ownerID = structure.owner_id;
-    if (structure.afk_timeout !== guild.afkTimeout) guild.afkTimeout = structure.afk_timeout;
+    if (structure.owner_id !== guild.ownerID) {
+      guild.ownerID = structure.owner_id;
+    }
+    if (structure.afk_timeout !== guild.afkTimeout) {
+      guild.afkTimeout = structure.afk_timeout;
+    }
     guild.verificationLevel = structure.verification_level;
     guild.defaultMessageNotifications = structure.default_message_notifications;
     guild.explicitContentFilter = structure.explicit_content_filter;
@@ -216,11 +220,52 @@ export class Cache {
     if (structure.timestamps) {
       activity.timestamps = structure.timestamps;
     }
+    if (activity.applicationID !== structure.application_id) {
+      activity.applicationID = structure.application_id;
+    }
+    if (activity.details !== structure.details) {
+      activity.details = structure.details;
+    }
+    if (activity.state !== structure.state) {
+      activity.state = structure.state;
+    }
+    if (activity.instance !== structure.instance) {
+      activity.instance = structure.instance;
+    }
+    if (activity.flags !== structure.flags) {
+      activity.flags = structure.flags;
+    }
+    if (activity.party !== structure.party) {
+      activity.party = structure.party;
+    }
+    if (activity.secrets !== structure.secrets) {
+      activity.secrets = structure.secrets;
+    }
+    // todo(#10): activity.emoji - Needs Emoji Object, waiting for the result of the #10 issue
   }
 
   public patchPresence(presence: Presence, structure: RawPresenceUpdate) {
-    // Todo(Cat66000)
-
-    presence.roles = structure.roles;
+    presence.status = structure.status;
+    presence.nick = structure.nick;
+    presence.premiumSince = structure.premium_since;
+    presence.clientStatus = structure.client_status;
+    presence.status = structure.status;
+    presence.rolesID = structure.roles;
+    if (presence.game) {
+      if (structure.game) {
+        this.patchActivity(presence.game, structure.game);
+      } else {
+        presence.game = undefined;
+      }
+    } else {
+      if (structure.game) {
+        presence.game = new Activity(structure.game, this.client);
+      } else {
+        presence.game = undefined;
+      }
+    }
+    presence.activities = structure.activities.map((activity) =>
+      new Activity(activity, this.client)
+    );
   }
 }
