@@ -23,9 +23,9 @@ export interface Overwrite {
   deny: RawOverwrite["deny_new"];
 }
 
-export interface BaseChannel {
-  readonly id: string;
-  type: ChannelType;
+export class BaseChannel {
+  public readonly id!: string;
+  public type!: ChannelType;
 }
 
 export class Channel implements BaseChannel {
