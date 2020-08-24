@@ -9,7 +9,6 @@ import {
   RawUser,
   RawEmoji,
   RawChannel,
-  RawVoiceState,
   RawGuildMember,
   RawPresenceUpdate,
   RawActivity,
