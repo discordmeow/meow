@@ -12,6 +12,6 @@ A breaking change could happen at any time. ⚠️
 Aims to be lightweight.
 
 ---
-We have a Discord server, an invite link will probably be shared soon.
+You can [join our Discord server](https://discord.gg/W6YgTPH) to discuss about Meow
 
-**Todo: Finish the readme** (lol)
+*Todo: Finish the readme** (lol)
