@@ -12,7 +12,7 @@ export class GuildEmoji {
   /** Emoji name */
   public name!: string;
   /** User that created this emoji */
-  public user?: User;
+  public user!: User;
   /** Whether this emoji is managed */
   public managed!: boolean;
   /** Whether this emoji is animated */
@@ -20,7 +20,7 @@ export class GuildEmoji {
   /** Whether this emoji can be used, may be false due to loss of Server Boosts */
   public available!: boolean;
   /** Roles this emoji is whitelist to */
-  public roles: Map<string, Role> = new Map<string, Role>();
+  public roles = new Map<string, Role>();
   /** Whether this emoji must be wrapped in colons */
   public requireColons!: boolean;
 
@@ -30,7 +30,7 @@ export class GuildEmoji {
 
     if (structure.user) this.user = client.cache.addUser(structure.user);
 
-    client.cache.patchEmoji(this, structure);
+    client.cache.patchGuildEmoji(this, structure);
   }
 
   public guild(): Guild {

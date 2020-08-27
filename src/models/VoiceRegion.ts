@@ -13,6 +13,7 @@ export class VoiceRegion {
   public deprecated: boolean;
   /** whether this is a custom voice region (used for events/etc) */
   public custom: boolean;
+
   constructor(structure: any, public client: Client) {
     this.id = structure.id;
     this.name = structure.name;
