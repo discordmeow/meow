@@ -18,7 +18,7 @@ export class Presence {
   /** IDs of roles this user is in */
   public rolesID: string[] = [];
   /** the user's current activity */
-  public game!: Activity | undefined;
+  public game?: Activity;
   /** id of the guild */
   public guildID: string;
   /** either "idle", "dnd", "online", or "offline" */
@@ -30,7 +30,7 @@ export class Presence {
   /** when the user started boosting the guild */
   public premiumSince?: number;
   /** this users guild nickname (if one is set) */
-  public nick?: string | null;
+  public nick?: string;
 
   constructor(
     structure: RawPresenceUpdate,
@@ -38,6 +38,7 @@ export class Presence {
   ) {
     this.userID = client.cache.addUser(structure.user).id;
     this.guildID = structure.guild_id;
+
     client.cache.patchPresence(this, structure);
   }
 
@@ -53,10 +54,8 @@ export class Presence {
 
   /** roles this user is in */
   public roles(): Map<string, Role> {
-    const returned: Map<string, Role> = new Map();
-    this.rolesID.map((ID) =>
-      returned.set(ID, this.guild().roles.get(ID) as Role)
+    return new Map<string, Role>(
+      this.rolesID.map((ID) => [ID, this.guild().roles.get(ID) as Role]),
     );
-    return returned;
   }
 }
