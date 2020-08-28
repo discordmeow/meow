@@ -1,4 +1,4 @@
-import { AllowedFormats, AllowedSizes } from "../../managers/UserManager.ts";
+import { AllowedFormats, AllowedSizes } from "../../client/Client.ts";
 import { CDN_BASE_URL as BASE_URL } from "../Constants.ts";
 
 function buildImageURL(
@@ -74,6 +74,7 @@ export function GUILD_BANNER(
     { format, size },
   );
 }
+
 export function USER_DEFAULT_AVATAR(userDiscriminator: string) {
   return `${BASE_URL}/embed/avatars/${+userDiscriminator % 5}.png`;
 }
