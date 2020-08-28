@@ -63,4 +63,8 @@ export class Client {
     if (user.isPartial) throw new Error("User should not be partial.");
     return USER_DEFAULT_AVATAR(user.discriminator as string);
   }
+
+  public getDisplayAvatarURL(user: User, options?: AvatarOptions) {
+    return this.getAvatarURL(user, options) || this.getDefaultAvatarURL(user);
+  }
 }
