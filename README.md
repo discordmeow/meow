@@ -14,4 +14,4 @@ Aims to be lightweight.
 ---
 You can [join our Discord server](https://discord.gg/W6YgTPH) to discuss about Meow
 
-*Todo: Finish the readme** (lol)
+*Todo: Finish the readme* (lol)
