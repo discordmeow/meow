@@ -226,7 +226,7 @@ export class Cache {
     member: GuildMember,
     structure: RawGuildMember,
   ): GuildMember {
-    const guild = member.guild();
+    const guildRoles = member.guild().roles;
 
     if (structure.premium_since) member.premiumSince = structure.premium_since;
     member.nick = structure.nick;
@@ -235,7 +235,7 @@ export class Cache {
 
     structure.roles.forEach((roleID) => {
       if (!member.roles.has(roleID)) {
-        member.roles.set(roleID, guild.roles.get(roleID) as Role);
+        member.roles.set(roleID, guildRoles.get(roleID) as Role);
       }
     });
 
