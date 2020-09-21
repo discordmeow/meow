@@ -66,15 +66,18 @@ export class Channel implements BaseChannel {
   /** when the last pinned message was pinned */
   public lastPinTimestamp?: number;
 
-  private _toString =
-    (["GUILD_NEWS", "GUILD_STORE", "GUILD_TEXT"] as ChannelType[])
-        .includes(this.type)
-      ? `<#${this.id}>`
-      : this.id;
+  private _toString: string;
 
   constructor(structure: RawChannel, public client: Client) {
     this.id = structure.id;
     this.type = Resolver.toStringChannelType(structure.type);
+
+    this._toString =
+      (["GUILD_NEWS", "GUILD_STORE", "GUILD_TEXT"] as ChannelType[])
+          .includes(this.type)
+        ? `<#${this.id}>`
+        : this.id;
+
     this.guildID = structure.guild_id || undefined;
     this.position = structure.position || undefined;
     if (structure.permission_overwrites) {
