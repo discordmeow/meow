@@ -61,6 +61,7 @@ export class Client {
 
   public getDefaultAvatarURL(user: User): string {
     if (user.isPartial) throw new Error("User should not be partial.");
+
     return USER_DEFAULT_AVATAR(user.discriminator as string);
   }
 
