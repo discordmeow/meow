@@ -284,25 +284,9 @@ export class Cache {
 
   public patchPresence(presence: Presence, structure: RawPresenceUpdate) {
     presence.status = structure.status;
-    presence.nick = structure.nick;
-    presence.premiumSince = structure.premium_since;
     presence.clientStatus = structure.client_status;
     presence.status = structure.status;
-    presence.rolesID = structure.roles;
 
-    if (presence.game) {
-      if (structure.game) {
-        this.patchActivity(presence.game, structure.game);
-      } else {
-        presence.game = undefined;
-      }
-    } else {
-      if (structure.game) {
-        presence.game = new Activity(structure.game, this.client);
-      } else {
-        presence.game = undefined;
-      }
-    }
     presence.activities = structure.activities.map((activity): Activity =>
       new Activity(activity, this.client)
     );

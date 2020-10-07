@@ -40,10 +40,8 @@ export interface RawRole {
   /** if this role is pinned in the user listing */
   hoist: boolean;
   position: number;
-  /** legacy */
-  permissions: number;
   /** permission bit set */
-  permissions_new: string;
+  permissions: string;
   /** whether this role is managed by an integration */
   managed: boolean;
   /** whether this role is mentionable */
@@ -106,13 +104,9 @@ export interface RawChannel {
 
 export interface RawOverwrite {
   id: string;
-  type: "role" | "member";
-  /** legacy */
-  allow: number;
-  allow_new: string;
-  /** legacy */
-  deny: number;
-  deny_new: string;
+  type: "0" | "1";
+  allow: string;
+  deny: string;
 }
 
 export interface RawClientStatus {
@@ -323,14 +317,10 @@ export interface RawGuild {
 
 export interface RawPresenceUpdate {
   user: RawUser;
-  roles: RawRole["id"][];
-  game?: RawActivity;
   guild_id: string;
   status: RawActivityStatus;
   activities: RawActivity[];
   client_status: RawClientStatus;
-  premium_since?: number;
-  nick?: string;
 }
 
 export interface RawReady {

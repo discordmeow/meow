@@ -18,9 +18,9 @@ export type ChannelType =
 
 export interface Overwrite {
   id: string;
-  type: RawOverwrite["type"];
-  allow: RawOverwrite["allow_new"];
-  deny: RawOverwrite["deny_new"];
+  type: "role" | "member";
+  allow: RawOverwrite["allow"];
+  deny: RawOverwrite["deny"];
 }
 
 export class BaseChannel {
@@ -82,8 +82,8 @@ export class Channel implements BaseChannel {
     this.position = structure.position || undefined;
     if (structure.permission_overwrites) {
       this.permissionOverwrites = structure.permission_overwrites.map((
-        { id, type, allow_new, deny_new },
-      ) => ({ id, type, allow: allow_new, deny: deny_new }));
+        { id, type, allow, deny },
+      ) => ({ id, type: !type ? "role" : "member", allow, deny }));
     }
     this.name = structure.name;
     this.topic = structure.topic || undefined;
@@ -120,5 +120,9 @@ export class Channel implements BaseChannel {
 
   public toString() {
     return this._toString;
+  }
+
+  public valueOf() {
+    return this.id;
   }
 }

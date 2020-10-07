@@ -15,10 +15,6 @@ export type ClientStatus = RawClientStatus;
 export class Presence {
   /** id of the user presence is being updated for */
   public userID: string;
-  /** IDs of roles this user is in */
-  public rolesID: string[] = [];
-  /** the user's current activity */
-  public game?: Activity;
   /** id of the guild */
   public guildID: string;
   /** either "idle", "dnd", "online", or "offline" */
@@ -27,10 +23,6 @@ export class Presence {
   public activities!: Activity[];
   /** user's platform-dependent status */
   public clientStatus!: ClientStatus;
-  /** when the user started boosting the guild */
-  public premiumSince?: number;
-  /** this users guild nickname (if one is set) */
-  public nick?: string;
 
   constructor(
     structure: RawPresenceUpdate,
@@ -50,12 +42,5 @@ export class Presence {
   /** the guild */
   public guild(): Guild {
     return this.client.cache.guilds.get(this.guildID) as Guild;
-  }
-
-  /** roles this user is in */
-  public roles(): Map<string, Role> {
-    return new Map<string, Role>(
-      this.rolesID.map((ID) => [ID, this.guild().roles.get(ID) as Role]),
-    );
   }
 }
