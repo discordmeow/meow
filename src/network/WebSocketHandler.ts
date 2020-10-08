@@ -1,9 +1,9 @@
 import { Client } from "../client/Client.ts";
 import {
-  WebSocket,
-  WebSocketCloseEvent,
   connectWebSocket,
   isWebSocketCloseEvent,
+  WebSocket,
+  WebSocketCloseEvent,
 } from "../../deps.ts";
 import { GATEWAY_BASE_URL, GATEWAY_VERSION } from "../util/Constants.ts";
 import { EventHandler } from "./EventHandler.ts";
@@ -87,7 +87,7 @@ export class WebSocketHandler {
       if (isWebSocketCloseEvent(payload)) {
         await this.handleGatewayError(payload);
       } else if (typeof payload === "string") {
-        await this.handlePayload(parse(payload) as Payload);
+        await this.handlePayload(parse(payload));
       }
     }
   }
