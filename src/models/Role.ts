@@ -22,7 +22,7 @@ export class Role {
     this.color = structure.color;
     this.hoist = structure.hoist;
     this.position = structure.position;
-    this.permissions = structure.permissions;
+    this.permissions = Number(structure.permissions);
     this.managed = structure.managed;
     this.mentionnable = structure.mentionnable;
   }
