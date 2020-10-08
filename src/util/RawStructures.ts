@@ -102,6 +102,162 @@ export interface RawChannel {
   last_pin_timestamp?: number;
 }
 
+export interface RawMessage {
+  id: string;
+  channel_id: string;
+  guild_id?: string;
+  author: RawUser;
+  member?: RawGuildMember;
+  content: string;
+  timestamp: string;
+  edited_timestamp?: string;
+  tts: boolean;
+  mention_everyone: boolean;
+  mentions: Array<RawUser & { member?: RawGuildMember }>;
+  mention_roles: string[];
+  mention_channels?: RawChannelMention[];
+  attachments: RawAttachment[];
+  embeds: RawEmbed[];
+  reactions: RawReaction[];
+  nonce?: number | string;
+  pinned: boolean;
+  webhook_id?: string;
+  type: RawMessageTypes;
+  activity?: RawMessageActivity;
+  application?: RawMessageApplication;
+  message_reference?: RawMessageReference;
+  flags?: number;
+}
+
+export enum RawMessageFlags {
+  CROSSPOSTED = 1 << 0,
+  IS_CROSSPOST = 1 << 1,
+  SUPPRESS_EMBEDS = 1 << 2,
+  SOURCE_MESSAGE_DELETED = 1 << 3,
+  URGENT = 1 << 4,
+}
+
+export enum RawMessageTypes {
+  DEFAULT,
+  RECIPIENT_ADD,
+  RECIPIENT_REMOVE,
+  CALL,
+  CHANNEL_NAME_CHANGE,
+  CHANNEL_ICON_CHANGE,
+  CHANNEL_PINNED_MESSAGE,
+  GUILD_MEMBER_JOIN,
+  USER_PREMIUM_GUILD_SUBSCRIPTION,
+  USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_1,
+  USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_2,
+  USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_3,
+  CHANNEL_FOLLOW_ADD,
+  GUILD_DISCOVERY_DISQUALIFIED = 14,
+  GUILD_DISCOVERY_REQUALIFIED,
+}
+
+export interface RawMessageActivity {
+  type: RawMessageActivityTypes;
+  /** party_id from a Rich Presence event */
+  party_id?: string;
+}
+
+export enum RawMessageActivityTypes {
+  JOIN = 1,
+  SPECTATE,
+  LISTEN,
+  JOIN_REQUEST,
+}
+
+export interface RawMessageApplication {
+  id: string;
+  cover_image?: string;
+  description: string;
+  icon?: string;
+  name: string;
+}
+
+export interface RawMessageReference {
+  message_id?: string;
+  channel_id: string;
+  guild_id?: string;
+}
+
+export interface RawChannelMention {
+  id: string;
+  guild_id: string;
+  type: RawChannelTypes;
+  name: string;
+}
+
+export interface RawAttachment {
+  id: string;
+  filename: string;
+  size: number;
+  url: string;
+  proxy_url: string;
+  height?: number;
+  width?: number;
+}
+
+export interface RawEmbed {
+  title?: string;
+  type?: "rich" | "image" | "video" | "gifv" | "article" | "link";
+  description?: string;
+  url?: string;
+  timestamp?: string;
+  color?: number;
+  footer?: RawEmbedFooter;
+  image?: RawEmbedImageOrThumbnail;
+  thumbnail?: RawEmbedImageOrThumbnail;
+  video?: RawEmbedVideo;
+  provider?: RawEmbedProvider;
+  author?: RawEmbedAuthor;
+  fields?: RawEmbedField[];
+}
+
+export interface RawEmbedFooter {
+  text: string;
+  icon_url?: string;
+  proxy_icon_url?: string;
+}
+
+export interface RawEmbedImageOrThumbnail {
+  url?: string;
+  proxy_url?: string;
+  height?: number;
+  width?: number;
+}
+
+export interface RawEmbedVideo {
+  url?: string;
+  height?: number;
+  width?: number;
+}
+
+export interface RawEmbedProvider {
+  name?: string;
+  url?: string;
+}
+
+export interface RawEmbedAuthor {
+  name?: string;
+  url?: string;
+  icon_url?: string;
+  proxy_icon_url?: string;
+}
+
+export interface RawEmbedField {
+  name: string;
+  value: string;
+  inline?: boolean;
+}
+
+export interface RawReaction {
+  count: number;
+  me: boolean;
+  emoji: RawEmoji;
+}
+
 export interface RawOverwrite {
   id: string;
   type: "0" | "1";
