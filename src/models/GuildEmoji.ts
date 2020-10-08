@@ -3,10 +3,9 @@ import { Guild } from "./Guild.ts";
 import { Role } from "./Role.ts";
 import { User } from "./User.ts";
 import { RawEmoji } from "../util/RawStructures.ts";
+import { BaseStructure } from "./Base.ts";
 
-export class GuildEmoji {
-  /** Emoji ID */
-  public readonly id: string;
+export class GuildEmoji extends BaseStructure {
   /** The ID of the emoji's guild */
   public guildID: string;
   /** Emoji name */
@@ -23,10 +22,13 @@ export class GuildEmoji {
   public roles = new Map<string, Role>();
   /** Whether this emoji must be wrapped in colons */
   public requireColons!: boolean;
+  private _toString: string;
 
   constructor(structure: RawEmoji, guild: Guild, public client: Client) {
+    super(structure.id as string);
     this.guildID = guild.id;
-    this.id = structure.id as string;
+
+    this._toString = `<${this.animated ? "a" : ""}:${this.name}:${this.id}>`;
 
     if (structure.user) this.user = client.cache.addUser(structure.user);
 
@@ -35,5 +37,9 @@ export class GuildEmoji {
 
   public guild(): Guild {
     return this.client.cache.guilds.get(this.guildID) as Guild;
+  }
+
+  public toString() {
+    return this._toString;
   }
 }

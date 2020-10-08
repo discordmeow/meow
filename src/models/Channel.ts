@@ -3,6 +3,7 @@ import { Resolver } from "../util/Resolver.ts";
 import { User } from "./User.ts";
 import { Guild } from "./Guild.ts";
 import { RawChannel, RawOverwrite } from "../util/RawStructures.ts";
+import { BaseStructure } from "./Base.ts";
 
 export type ChannelType =
   | "GUILD_TEXT"
@@ -20,14 +21,7 @@ export interface Overwrite {
   deny: RawOverwrite["deny"];
 }
 
-export class BaseChannel {
-  public readonly id!: string;
-  public type!: ChannelType;
-}
-
-export class Channel implements BaseChannel {
-  /** the id of this channel */
-  public readonly id: string;
+export class Channel extends BaseStructure {
   /** the type of channel */
   public type: ChannelType;
   /** the id of the guild */
@@ -66,7 +60,8 @@ export class Channel implements BaseChannel {
   private _toString: string;
 
   constructor(structure: RawChannel, public client: Client) {
-    this.id = structure.id;
+    super(structure.id);
+
     this.type = Resolver.toStringChannelType(structure.type);
 
     this._toString =
@@ -117,9 +112,5 @@ export class Channel implements BaseChannel {
 
   public toString() {
     return this._toString;
-  }
-
-  public valueOf() {
-    return this.id;
   }
 }

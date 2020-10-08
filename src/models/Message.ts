@@ -1,11 +1,9 @@
 import { Client } from "../client/Client.ts";
+import { RawMessage } from "../util/RawStructures.ts";
+import { BaseStructure } from "./Base.ts";
 
-interface MessageStructure {
-  id: string;
-  channelID?: string;
-  guildID?: string;
-}
-
-export class Message {
-  constructor(structure: MessageStructure, public client: Client) {}
+export class Message extends BaseStructure {
+  constructor(structure: RawMessage, public client: Client) {
+    super(structure.id);
+  }
 }

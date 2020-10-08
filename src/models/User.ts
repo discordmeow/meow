@@ -1,9 +1,8 @@
 import { Client } from "../client/Client.ts";
 import { RawUser } from "../util/RawStructures.ts";
+import { BaseStructure } from "./Base.ts";
 
-export class User {
-  /** The user's ID */
-  public readonly id: string;
+export class User extends BaseStructure {
   /** The user's username, not unique across the platform */
   public username?: string;
   /** The user's 4-digit discord-tag */
@@ -23,13 +22,19 @@ export class User {
   /** The public flags on a user's account */
   public publicFlags?: number;
 
+  private _toString = `<@${this.id}>`;
+
   constructor(structure: RawUser, public client: Client) {
-    this.id = structure.id;
+    super(structure.id);
 
     client.cache.patchUser(this, structure);
   }
 
   get isPartial(): boolean {
     return typeof this.username !== "undefined";
+  }
+
+  public toString() {
+    return this._toString;
   }
 }

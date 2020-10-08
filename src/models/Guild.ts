@@ -86,4 +86,8 @@ export class Guild {
 
     client.cache.patchGuild(this, structure);
   }
+
+  public toString() {
+    return this.name;
+  }
 }
