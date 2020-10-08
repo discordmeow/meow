@@ -5,13 +5,13 @@ import { Guild } from "../models/Guild.ts";
 import { Role } from "../models/Role.ts";
 import { User } from "../models/User.ts";
 import {
-  RawGuild,
-  RawUser,
-  RawEmoji,
+  RawActivity,
   RawChannel,
+  RawEmoji,
+  RawGuild,
   RawGuildMember,
   RawPresenceUpdate,
-  RawActivity,
+  RawUser,
   RawVoiceState,
 } from "../util/RawStructures.ts";
 import { GuildMember } from "../models/GuildMember.ts";

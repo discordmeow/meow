@@ -1,7 +1,7 @@
 import {
-  RawPresenceUpdate,
   RawActivityStatus,
   RawClientStatus,
+  RawPresenceUpdate,
 } from "../util/RawStructures.ts";
 import { Guild } from "./Guild.ts";
 import { Client } from "../client/Client.ts";

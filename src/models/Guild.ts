@@ -5,8 +5,8 @@ import { GuildMember } from "./GuildMember.ts";
 import { Role } from "./Role.ts";
 import { VoiceState } from "./VoiceState.ts";
 import {
-  RawGuildFeatures,
   RawGuild,
+  RawGuildFeatures,
   RawMFALevel,
 } from "../util/RawStructures.ts";
 import { Presence } from "./Presence.ts";

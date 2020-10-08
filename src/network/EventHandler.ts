@@ -10,10 +10,8 @@ import {
   RawChannelPinsUpdate,
   RawGuild,
   RawGuildBan,
-
   RawGuildEmojisUpdate,
   RawGuildIntegrationsUpdate,
-
   RawGuildMemberAdd,
   RawGuildMemberRemove,
   RawGuildMembersChunk,

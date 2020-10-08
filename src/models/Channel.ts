@@ -2,10 +2,7 @@ import { Client } from "../client/Client.ts";
 import { Resolver } from "../util/Resolver.ts";
 import { User } from "./User.ts";
 import { Guild } from "./Guild.ts";
-import {
-  RawChannel,
-  RawOverwrite,
-} from "../util/RawStructures.ts";
+import { RawChannel, RawOverwrite } from "../util/RawStructures.ts";
 
 export type ChannelType =
   | "GUILD_TEXT"

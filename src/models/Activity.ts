@@ -1,10 +1,10 @@
 import {
   RawActivity,
-  RawActivityTypes,
-  RawActivityTimestamps,
+  RawActivityFlags,
   RawActivityParty,
   RawActivitySecrets,
-  RawActivityFlags,
+  RawActivityTimestamps,
+  RawActivityTypes,
 } from "../util/RawStructures.ts";
 import { Client } from "../client/Client.ts";
 import { GuildEmoji } from "./GuildEmoji.ts";
